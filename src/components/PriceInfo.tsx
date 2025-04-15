@@ -1,7 +1,15 @@
 import React from 'react';
-import { Loader } from 'lucide-react';
 
-const PriceInfo = ({ fromToken, toToken, exchangeRate, loading, fromAmount }) => {
+// Định nghĩa interface cho props
+interface PriceInfoProps {
+  fromToken: string;
+  toToken: string;
+  exchangeRate: number | null;
+  loading: boolean;
+  fromAmount: string;
+}
+
+const PriceInfo: React.FC<PriceInfoProps> = ({ fromToken, toToken, exchangeRate, loading, fromAmount }) => {
   return (
     <div className="text-sm mt-4">
       {/* Price Row */}
@@ -14,7 +22,7 @@ const PriceInfo = ({ fromToken, toToken, exchangeRate, loading, fromAmount }) =>
             <>
               {`1 ${fromToken} = ${exchangeRate ? exchangeRate.toFixed(8) : '0.00'} ${toToken}`}
               <button className="ml-2 text-gray-400 hover:text-gray-600 transition-colors">
-                ⇋
+                🔄
               </button>
             </>
           )}

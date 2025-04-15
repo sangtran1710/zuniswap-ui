@@ -1,5 +1,6 @@
-export const getTokenImage = (symbol) => {
-  const logos = {
+// tokenUtils.ts
+export const getTokenImage = (symbol: string): string => {
+  const logos: Record<string, string> = {
     ETH: "https://assets.coingecko.com/coins/images/279/thumb/ethereum.png",
     BTC: "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png",
     USDT: "https://assets.coingecko.com/coins/images/325/thumb/Tether.png",
@@ -9,6 +10,6 @@ export const getTokenImage = (symbol) => {
     XRP: "https://assets.coingecko.com/coins/images/44/thumb/xrp-symbol-white-128.png",
     SOL: "https://assets.coingecko.com/coins/images/4128/thumb/solana.png"
   };
-
+  
   return logos[symbol] || "/api/placeholder/32/32";
 };

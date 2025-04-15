@@ -1,12 +1,21 @@
 import React from "react";
 
-// (Optional) You can import the X icon for the close button:
-// import { X } from "lucide-react";
+interface WalletModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-const WalletModal = ({ isOpen, onClose }) => {
+interface Wallet {
+  name: string;
+  description?: string;
+  status?: string;
+  icon: string;
+}
+
+const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
-  const wallets = [
+  const wallets: Wallet[] = [
     {
       name: "Uniswap Extension",
       status: "Detected",
@@ -33,7 +42,7 @@ const WalletModal = ({ isOpen, onClose }) => {
   ];
 
   // Prevent clicks inside the modal from closing it
-  const handleInnerClick = (e) => {
+  const handleInnerClick = (e: React.MouseEvent): void => {
     e.stopPropagation();
   };
 
@@ -56,6 +65,7 @@ const WalletModal = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-xl"
+            aria-label="Close"
           >
             ×
           </button>
@@ -70,6 +80,7 @@ const WalletModal = ({ isOpen, onClose }) => {
                          bg-white dark:bg-gray-800
                          hover:bg-gray-50 dark:hover:bg-gray-700
                          transition-all border border-gray-100 dark:border-gray-700"
+              aria-label={`Connect with ${wallet.name}`}
             >
               <div className="flex items-center gap-3">
                 <span className="text-xl">{wallet.icon}</span>
@@ -103,4 +114,4 @@ const WalletModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default WalletModal;
+export default WalletModal; 
