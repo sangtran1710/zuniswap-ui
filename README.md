@@ -1,8 +1,15 @@
-# React + Vite
+# zuniswap-ui 🦄
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A frontend-only clone of Uniswap's UI, rebuilt in **TypeScript** using **React**, **Tailwind CSS**, and **Vite**.  
+This project is for learning and showcasing UI/UX design in Web3 dApps.
 
-Currently, two official plugins are available:
+## Features
+- Token select modal
+- Isometric visual style
+- Responsive layout
+- Planned: WalletConnect, swap interaction, dark mode
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- React + Vite
+- Tailwind CSS + custom CSS
+- TypeScript

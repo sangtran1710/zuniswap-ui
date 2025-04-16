@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import '../styles/isometric.css';
 
 interface IsometricButtonProps {
   children: ReactNode;
@@ -24,7 +25,7 @@ const IsometricButton: React.FC<IsometricButtonProps> = ({
   icon,
 }) => {
   const baseClasses = `
-    iso-button
+    isometric-button
     relative
     font-medium
     rounded-lg
@@ -33,20 +34,16 @@ const IsometricButton: React.FC<IsometricButtonProps> = ({
     transition-all
     duration-200
     ${fullWidth ? 'w-full' : ''}
-    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:brightness-110'}
+    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
     ${className}
   `;
 
-  const shadowStyle = {
-    boxShadow: `0 ${depth}px 0 0 ${color}80, 0 ${depth + 2}px 0 0 rgba(0,0,0,0.1)`,
-    transform: disabled ? 'none' : `translateY(-${depth/2}px)`,
+  // Custom button styling with consistent depth effect
+  const buttonStyle = {
     background: color,
+    boxShadow: `0 ${depth}px 0 0 rgba(0,0,0,0.15)`,
     color: isLightColor(color) ? '#000' : '#fff',
-  };
-
-  const activeStyle = {
-    boxShadow: `0 2px 0 0 ${color}80, 0 3px 0 0 rgba(0,0,0,0.1)`,
-    transform: 'translateY(0)',
+    transform: disabled ? 'none' : 'translateY(0)',
   };
 
   return (
@@ -55,28 +52,10 @@ const IsometricButton: React.FC<IsometricButtonProps> = ({
       className={baseClasses}
       onClick={onClick}
       disabled={disabled}
-      style={shadowStyle}
-      onMouseDown={(e) => {
-        if (!disabled) {
-          const target = e.currentTarget;
-          Object.assign(target.style, activeStyle);
-        }
-      }}
-      onMouseUp={(e) => {
-        if (!disabled) {
-          const target = e.currentTarget;
-          Object.assign(target.style, shadowStyle);
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled) {
-          const target = e.currentTarget;
-          Object.assign(target.style, shadowStyle);
-        }
-      }}
+      style={buttonStyle}
     >
       <div className="flex items-center justify-center space-x-2">
-        {icon && <span>{icon}</span>}
+        {icon && <span className="flex items-center justify-center">{icon}</span>}
         <span>{children}</span>
       </div>
     </button>
@@ -86,7 +65,14 @@ const IsometricButton: React.FC<IsometricButtonProps> = ({
 // Helper function to determine if a color is light or dark
 function isLightColor(color: string): boolean {
   // Default to dark text for unknown colors
-  if (color.startsWith('var(')) return false;
+  if (color.startsWith('var(')) {
+    // Special handling for CSS variables
+    const varName = color.match(/var\((.*?)\)/)?.[1];
+    if (varName === '--iso-accent' || varName === '--iso-primary') {
+      return false; // Most of our accent colors are dark enough for white text
+    }
+    return false;
+  }
   
   // Convert hex to RGB
   let r, g, b;
@@ -107,7 +93,7 @@ function isLightColor(color: string): boolean {
 
   // Calculate luminance
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5;
+  return luminance > 0.55; // Slightly higher threshold for better contrast
 }
 
 export default IsometricButton; 

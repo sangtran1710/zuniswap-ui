@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import '../styles/isometric.css';
 
 interface IsometricBoxProps {
   children: ReactNode;
@@ -21,44 +22,49 @@ const IsometricBox: React.FC<IsometricBoxProps> = ({
   onClick,
   floating = false,
 }) => {
+  // Calculate depth-based variables
+  const depthScale = depth / 20; // Standard depth is 20
+  
+  // Apply styles
   const frontStyle = frontColor ? { background: frontColor } : {};
-  const rightStyle = rightColor ? { background: rightColor } : {};
-  const topStyle = topColor ? { background: topColor } : {};
+  const rightStyle = rightColor ? { 
+    background: rightColor,
+    width: `${depth}px`,
+  } : { width: `${depth}px` };
+  
+  const topStyle = topColor ? { 
+    background: topColor,
+    height: `${depth}px`,
+  } : { height: `${depth}px` };
 
   return (
     <div 
-      className={`iso-box ${floating ? 'iso-float' : ''} ${className}`}
+      className={`isometric-box ${floating ? 'isometric-float' : ''} ${className}`}
       onClick={onClick}
       style={{ 
-        width: '100%', 
-        height: '100%',
-        cursor: onClick ? 'pointer' : 'default'
+        cursor: onClick ? 'pointer' : 'default',
+        // Apply subtle depth effect based on depth prop
+        transform: `rotateX(var(--iso-rotation-x)) rotateY(var(--iso-rotation-y)) translateZ(${depthScale * 2}px)`,
       }}
     >
+      {/* Main content container */}
       <div 
-        className="iso-box-top rounded-lg shadow-lg"
-        style={{ 
-          ...topStyle,
-          transform: `translateZ(${depth}px)` 
-        }}
+        className="isometric-box__front"
+        style={frontStyle}
       >
         {children}
       </div>
+      
+      {/* Right face */}
       <div 
-        className="iso-box-front"
-        style={{ 
-          ...frontStyle,
-          height: `${depth}px`,
-          transform: `rotateX(-90deg) translateY(${depth/2}px) translateZ(${depth/2}px)`
-        }}
+        className="isometric-box__right isometric-box__face"
+        style={rightStyle}
       />
+      
+      {/* Top face */}
       <div 
-        className="iso-box-right"
-        style={{ 
-          ...rightStyle,
-          width: `${depth}px`,
-          transform: `rotateY(90deg) translateX(${depth/2}px) translateZ(${depth/2}px)`
-        }}
+        className="isometric-box__top isometric-box__face"
+        style={topStyle}
       />
     </div>
   );
