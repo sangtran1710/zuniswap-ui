@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "trade": "Trade",
+    "explore": "Explore",
+    "pool": "Pool"
+  },
+  "common": {
+    "searchTokens": "Search tokens...",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language",
+    "currency": "Currency"
+  },
+  "wallet": {
+    "connect": "Connect Wallet",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "connecting": "Connecting..."
+  },
+  "swap": {
+    "tabs": {
+      "swap": "Swap",
+      "limit": "Limit",
+      "send": "Send",
+      "buy": "Buy"
+    },
+    "from": "From",
+    "to": "To",
+    "rate": "Exchange Rate",
+    "fee": "Network Fee",
+    "swap": "Swap"
+  }
+} 

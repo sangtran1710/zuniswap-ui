@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "trade": "Giao dịch",
+    "explore": "Khám phá",
+    "pool": "Pool"
+  },
+  "common": {
+    "searchTokens": "Tìm kiếm token...",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công"
+  },
+  "settings": {
+    "theme": "Giao diện",
+    "language": "Ngôn ngữ",
+    "currency": "Tiền tệ"
+  },
+  "wallet": {
+    "connect": "Kết nối ví",
+    "disconnect": "Ngắt kết nối",
+    "connected": "Đã kết nối",
+    "connecting": "Đang kết nối..."
+  },
+  "swap": {
+    "tabs": {
+      "swap": "Đổi",
+      "limit": "Giới hạn",
+      "send": "Gửi",
+      "buy": "Mua"
+    },
+    "from": "Từ",
+    "to": "Đến",
+    "rate": "Tỷ giá",
+    "fee": "Phí mạng",
+    "swap": "Đổi"
+  }
+} 

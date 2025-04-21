@@ -1,0 +1,78 @@
+:root {
+  /* Light mode colors (default) */
+  --background-primary: #f8f9fa;
+  --background-secondary: #f1f5f9;
+  --background-tertiary: #e2e8f0;
+  --card-background: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(226, 232, 240, 0.5);
+  
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  
+  --primary-color: #7e22ce;
+  --primary-color-hover: #6b21a8;
+  --secondary-color: #c084fc;
+  --secondary-color-hover: #a855f7;
+  --accent-color: #ec4899;
+  --accent-color-hover: #db2777;
+
+  --button-text: #ffffff;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  
+  /* Input fields */
+  --input-background: rgba(255, 255, 255, 0.5);
+  --input-border: rgba(226, 232, 240, 0.8);
+  --input-text: #1e293b;
+  --input-placeholder: #94a3b8;
+
+  /* Shadows */
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  /* Gradients */
+  --gradient-background: radial-gradient(circle at center, rgba(192, 132, 252, 0.1), rgba(126, 34, 206, 0.05));
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+  --gradient-button: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.dark {
+  /* Dark mode colors */
+  --background-primary: #0f172a;
+  --background-secondary: #1e1b4b;
+  --background-tertiary: #1e293b;
+  --card-background: rgba(15, 23, 42, 0.7);
+  --card-border: rgba(79, 70, 229, 0.2);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #cbd5e1;
+  
+  /* Primary colors remain the same for brand consistency */
+  --primary-color: #7e22ce;
+  --primary-color-hover: #9333ea;
+  --secondary-color: #c084fc;
+  --secondary-color-hover: #d8b4fe;
+  --accent-color: #ec4899;
+  --accent-color-hover: #f472b6;
+  
+  --button-text: #ffffff;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  
+  /* Input fields */
+  --input-background: rgba(15, 23, 42, 0.7);
+  --input-border: rgba(79, 70, 229, 0.2);
+  --input-text: #f8fafc;
+  --input-placeholder: #94a3b8;
+
+  /* Shadows */
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  
+  /* Gradients */
+  --gradient-background: radial-gradient(circle at center, rgba(126, 34, 206, 0.15), rgba(30, 27, 75, 0.8));
+  --gradient-card: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.6));
+  --gradient-button: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+} 
