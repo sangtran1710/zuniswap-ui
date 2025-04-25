@@ -1,0 +1,144 @@
+/* Intro animations for Zuniswap */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes letterSpacing {
+  from {
+    letter-spacing: -0.3px;
+    opacity: 0;
+    filter: blur(2px);
+  }
+  to {
+    letter-spacing: normal;
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    text-shadow: 0 0 0px rgba(126, 34, 206, 0);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(126, 34, 206, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 0px rgba(126, 34, 206, 0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.animate-letter-spacing {
+  animation: letterSpacing 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, letter-spacing, filter;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2.5s ease-in-out forwards;
+}
+
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animate-delay-1500 {
+  animation-delay: 1500ms;
+}
+
+/* Text animation classes */
+.cinematic-text-hidden {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.cinematic-text-visible {
+  opacity: 1;
+  transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Widget animation */
+.widget-hidden {
+  opacity: 0;
+  transform: translateY(15px) scale(0.98);
+  will-change: opacity, transform;
+}
+
+.widget-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Special cinematic title animation */
+.title-first-line-visible {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             letterSpacing 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform, letter-spacing, filter;
+}
+
+.title-second-line-visible {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             letterSpacing 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             glowPulse 2.5s ease-in-out 0.9s forwards;
+  will-change: opacity, transform, letter-spacing, filter, text-shadow;
+} 

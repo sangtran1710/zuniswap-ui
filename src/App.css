@@ -56,3 +56,32 @@
     opacity: 0.5;
   }
 }
+
+/* Logo positioning */
+.logo-flush-left {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* Edge-to-edge container */
+.container-full-width {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Page fade-out animation */
+.page-fade-out {
+  animation: pageFadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}

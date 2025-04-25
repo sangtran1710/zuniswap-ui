@@ -4,7 +4,7 @@ export const theme = {
     size: {
       heading: 'text-3xl',
       button: 'text-base',
-      tokenAmount: 'text-2xl',
+      tokenAmount: 'text-xl',
       label: 'text-sm',
     },
   },

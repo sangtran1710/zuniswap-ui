@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDownIcon, Cog6ToothIcon, ArrowsUpDownIcon, ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import TokenSelector from './TokenSelector';
-import TokenModal from './TokenModal';
-import useTokenModals from '../hooks/useTokenModals';
-import { Token } from '../types';
-import SettingsModal from './SettingsModal';
-import { theme } from '../styles/theme';
+import TokenSelector from '../TokenSelector';
+import TokenModal from '../TokenModal';
+import useTokenModals from '../../hooks/useTokenModals';
+import { Token } from '../../types';
+import SettingsModal from '../SettingsModal';
+import { theme } from '../../styles/theme';
 
 const SwapCard = () => {
   const { t } = useTranslation();
@@ -30,6 +30,7 @@ const SwapCard = () => {
   const [toUsdValue, setToUsdValue] = useState<string>('0.00');
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [slippage, setSlippage] = useState(0.5);
+  const [deadline, setDeadline] = useState(30);
   const [selectingForFrom, setSelectingForFrom] = useState(true);
 
   // Tính tỷ giá chuyển đổi (exchange rate)
@@ -127,6 +128,14 @@ const SwapCard = () => {
 
   const handleSwap = () => {
     // Implementation of handleSwap function
+    console.log('Swap executed with settings:', {
+      fromToken: selectedFromToken?.symbol,
+      toToken: selectedToToken?.symbol,
+      fromAmount,
+      toAmount,
+      slippage,
+      deadline
+    });
   };
 
   const handleTokenSelect = (token: Token) => {
@@ -138,17 +147,17 @@ const SwapCard = () => {
   };
 
   return (
-    <div className={`card bg-card ${theme.radius.card} ${theme.shadow.card} w-full max-w-lg mx-auto p-4`}>
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className={`text-xl ${theme.font.family} font-semibold ${theme.colors.text.primary}`}>Swap</h2>
+    <div className={`card bg-card ${theme.radius.card} ${theme.shadow.card} w-full max-w-md mx-auto p-3`}>
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between items-center mb-1">
+          <h2 className={`text-lg ${theme.font.family} font-semibold ${theme.colors.text.primary}`}>Swap</h2>
           <div className="flex gap-2">
             <button
               onClick={() => setIsSettingsModalOpen(true)}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1C2537] hover:bg-[#252d3f] transition-colors"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1C2537] hover:bg-[#252d3f] transition-colors"
               aria-label="Settings"
             >
-              <Cog6ToothIcon className="w-5 h-5 text-gray-400" />
+              <Cog6ToothIcon className="w-4 h-4 text-gray-400" />
             </button>
           </div>
         </div>
@@ -181,16 +190,17 @@ const SwapCard = () => {
                 onChange={handleFromAmountChange}
                 placeholder="0.0"
                 className={`
-                  w-full h-14 px-4
+                  w-full h-12 px-3
                   bg-transparent
                   ${theme.font.size.tokenAmount} ${theme.font.family} font-medium
                   ${theme.colors.text.primary}
-                  focus:outline-none
+                  focus:outline-none focus:ring-0 focus:border-transparent
+                  outline-none border-none
                 `}
                 inputMode="decimal"
               />
               {fromUsdValue && (
-                <div className="px-4 pb-2">
+                <div className="px-3 pb-1">
                   <span className={`${theme.font.size.label} ${theme.colors.text.secondary}`}>
                     ≈ ${fromUsdValue}
                   </span>
@@ -212,14 +222,14 @@ const SwapCard = () => {
             onClick={swapDirection}
             className="
               flex items-center justify-center
-              w-10 h-10 rounded-full
+              w-8 h-8 rounded-full
               bg-[#1C2537] hover:bg-[#252d3f]
               shadow-lg z-10
               transition-colors
             "
             aria-label="Swap direction"
           >
-            <ArrowsUpDownIcon className="w-5 h-5 text-blue-500" />
+            <ArrowsUpDownIcon className="w-4 h-4 text-blue-500" />
           </button>
         </div>
 
@@ -242,16 +252,17 @@ const SwapCard = () => {
                 onChange={handleToAmountChange}
                 placeholder="0.0"
                 className={`
-                  w-full h-14 px-4
+                  w-full h-12 px-3
                   bg-transparent
                   ${theme.font.size.tokenAmount} ${theme.font.family} font-medium
                   ${theme.colors.text.primary}
-                  focus:outline-none
+                  focus:outline-none focus:ring-0 focus:border-transparent
+                  outline-none border-none
                 `}
                 inputMode="decimal"
               />
               {toUsdValue && (
-                <div className="px-4 pb-2">
+                <div className="px-3 pb-1">
                   <span className={`${theme.font.size.label} ${theme.colors.text.secondary}`}>
                     ≈ ${toUsdValue}
                   </span>
@@ -268,43 +279,51 @@ const SwapCard = () => {
         </div>
 
         {/* Exchange Rate */}
-        {selectedFromToken && selectedToToken && (
-          <div className="flex justify-between items-center px-2 py-2">
+        {selectedFromToken && selectedToToken && fromAmount && toAmount && (
+          <div className="flex justify-between items-center px-2 py-2 rounded-lg bg-[#131A2A] mt-2">
             <span className={`${theme.font.size.label} ${theme.colors.text.secondary}`}>
-              1 {selectedFromToken.symbol} = {getExchangeRate().toFixed(6)} {selectedToToken.symbol}
+              Exchange Rate
             </span>
-            <button
-              onClick={swapDirection}
-              className="flex items-center"
-              aria-label="Switch rate direction"
-            >
-              <ArrowsRightLeftIcon className="w-4 h-4 text-gray-400" />
-            </button>
+            <span className={`${theme.font.size.label} ${theme.colors.text.primary}`}>
+              1 {selectedFromToken.symbol} ≈ {getExchangeRate().toFixed(6)} {selectedToToken.symbol}
+            </span>
           </div>
         )}
 
-        {/* Action Button */}
+        {/* Swap Button */}
         <button
-          disabled={!selectedFromToken || !selectedToToken || !fromAmount}
           onClick={handleSwap}
+          disabled={!fromAmount || !toAmount || !selectedFromToken || !selectedToToken}
           className={`
-            w-full py-4 mt-2 rounded-2xl
-            font-semibold ${theme.font.size.button} ${theme.font.family}
-            ${(!selectedFromToken || !selectedToToken || !fromAmount) 
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
-              : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'}
-            transition-all
+            w-full py-3 mt-2 rounded-xl
+            font-semibold text-white
+            ${(!fromAmount || !toAmount || !selectedFromToken || !selectedToToken)
+              ? 'bg-blue-500/50 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600 transition-colors'
+            }
           `}
         >
-          {!selectedFromToken || !selectedToToken 
-            ? 'Select tokens' 
-            : !fromAmount 
-              ? 'Enter an amount' 
+          {!selectedFromToken || !selectedToToken
+            ? 'Select tokens'
+            : !fromAmount || !toAmount
+              ? 'Enter an amount'
               : 'Swap'}
         </button>
       </div>
 
-      {/* Modals */}
+      {/* Settings Modal */}
+      {isSettingsModalOpen && (
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+          slippage={slippage}
+          deadline={deadline}
+          onSlippageChange={(value) => setSlippage(value)}
+          onDeadlineChange={(value) => setDeadline(value)}
+        />
+      )}
+
+      {/* Token Modal */}
       {isTokenModalOpen && (
         <TokenModal
           isOpen={isTokenModalOpen}
@@ -313,15 +332,8 @@ const SwapCard = () => {
           selectedToken={getSelected()}
         />
       )}
-      
-      {isSettingsModalOpen && (
-        <SettingsModal
-          isOpen={isSettingsModalOpen}
-          onClose={() => setIsSettingsModalOpen(false)}
-        />
-      )}
     </div>
   );
 };
 
-export default SwapCard;
+export default SwapCard; 

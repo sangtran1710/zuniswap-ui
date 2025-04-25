@@ -5,6 +5,8 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    container:{center:true,padding:'1rem'},
+    spacing:{...require('tailwindcss/defaultTheme').spacing,  '14':'56px'}, 
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

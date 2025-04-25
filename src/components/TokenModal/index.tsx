@@ -8,7 +8,7 @@ import {
   CheckIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/outline';
-import { Token } from '../types';
+import { Token } from '../../types';
 
 // Top tokens by volume on Uniswap (preserving original case)
 const TOP_TOKEN_ADDRESSES = [
@@ -249,8 +249,10 @@ const TokenModal: React.FC<TokenModalProps> = ({ isOpen, onClose, onSelectToken,
 
               {/* No Results */}
               {filteredTokens.length === 0 && (
-                <div className="py-8 text-center text-gray-500">
-                  No tokens found matching "{searchTerm}"
+                <div className="py-10 text-center">
+                  <p className="text-gray-400">
+                    No tokens found for "{searchTerm}"
+                  </p>
                 </div>
               )}
             </>

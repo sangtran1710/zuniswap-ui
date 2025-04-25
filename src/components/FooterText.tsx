@@ -9,7 +9,7 @@ const FooterText: React.FC = () => {
       ${theme.font.family}
       text-center max-w-md mx-auto mt-8
     `}>
-      The largest onchain marketplace powered by Ethereum.
+      {/* Footer content removed to avoid overlap */}
     </p>
   );
 };

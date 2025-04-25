@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import useWallet from '../hooks/useWallet';
+import { useWagmi } from '../hooks/useWagmi';
 
 interface WalletContextProps {
   address: string | null;
@@ -7,9 +7,9 @@ interface WalletContextProps {
   network: string | null;
   isConnected: boolean;
   isLoading: boolean;
-  error: string | null;
+  error: Error | null;
   isMetaMaskInstalled: boolean;
-  connectWallet: () => Promise<void>;
+  connectWallet: () => void;
   disconnectWallet: () => void;
 }
 
@@ -17,22 +17,32 @@ const WalletContext = createContext<WalletContextProps | undefined>(undefined);
 
 export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const {
-    wallet,
-    isLoading,
+    address,
+    balance,
+    balanceSymbol,
+    isConnected,
+    isPending,
     error,
-    connectWallet,
+    chainId,
+    isMetaMaskAvailable,
+    connectWallet: connectWithWagmi,
     disconnectWallet,
-    isMetaMaskInstalled,
-  } = useWallet();
+  } = useWagmi();
+
+  // Simplified connect function that connects to MetaMask by default
+  const connectWallet = () => {
+    // This is just a placeholder - actual connection is handled in the modal
+    // where specific connectors are used
+  };
 
   const value = {
-    address: wallet.address,
-    balance: wallet.balance,
-    network: wallet.network,
-    isConnected: wallet.isConnected,
-    isLoading,
+    address: address || null,
+    balance: balance ? `${balance} ${balanceSymbol}` : null,
+    network: chainId ? `Chain ID: ${chainId}` : null,
+    isConnected,
+    isLoading: isPending,
     error,
-    isMetaMaskInstalled,
+    isMetaMaskInstalled: isMetaMaskAvailable,
     connectWallet,
     disconnectWallet,
   };

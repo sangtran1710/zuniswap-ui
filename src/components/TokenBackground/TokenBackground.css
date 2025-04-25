@@ -1,0 +1,188 @@
+/* TokenBackground styles */
+.token-background {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.token {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+  will-change: transform, filter, box-shadow;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0.75;
+  transform-origin: center center;
+}
+
+.token::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: -1;
+  background: inherit;
+  filter: blur(8px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.token:hover::before {
+  opacity: 0.7;
+}
+
+.token:hover {
+  box-shadow: 0 0 20px currentColor;
+  transform: scale(1.1);
+  opacity: 1;
+  z-index: 10;
+  filter: blur(0px) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tooltip {
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background-color: rgba(18, 18, 18, 0.95);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.token:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(5px);
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: rgba(18, 18, 18, 0.95);
+}
+
+.token-name {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.token-change {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.token-change-positive {
+  color: #4ade80;
+}
+
+.token-change-negative {
+  color: #f87171;
+}
+
+/* Floating animation keyframes - much more subtle */
+@keyframes floatVertical {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatHorizontal {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply a more subtle pulse animation to tokens by default */
+.token {
+  animation: pulse 15s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+/* Gradient overlay for better visual effect */
+.gradient-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Glass effect for tokens */
+.glass-effect {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Additional depth to tokens */
+.token:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .token {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .token {
+    font-size: 0.6rem;
+  }
+} 

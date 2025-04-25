@@ -85,6 +85,12 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   
   // Wallet
   isWalletModalOpen: false,
-  openWalletModal: () => set({ isWalletModalOpen: true }),
-  closeWalletModal: () => set({ isWalletModalOpen: false }),
+  openWalletModal: () => {
+    console.log('Opening wallet modal');
+    set({ isWalletModalOpen: true });
+  },
+  closeWalletModal: () => {
+    console.log('Closing wallet modal');
+    set({ isWalletModalOpen: false });
+  },
 })); 

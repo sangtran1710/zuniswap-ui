@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { Token } from '../types';
-import { theme } from '../styles/theme';
+import { Token } from '../../types';
+import { theme } from '../../styles/theme';
 
 interface TokenSelectorProps {
   token: Token | null;
@@ -70,4 +70,4 @@ export default function TokenSelector({ token, onTokenClick, className = '' }: T
       <ChevronDownIcon className={`w-4 h-4 ${theme.colors.text.secondary}`} />
     </button>
   );
-}
+} 

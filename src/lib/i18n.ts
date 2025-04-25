@@ -6,7 +6,7 @@ const enTranslations = {
   common: {
     connectWallet: 'Connect Wallet',
     connecting: 'Connecting...',
-    instalMetamask: 'Install MetaMask',
+    instalMetamask: 'Connect',
     settings: 'Settings',
     darkMode: 'Dark Mode',
     lightMode: 'Light Mode',
@@ -46,7 +46,7 @@ const viTranslations = {
   common: {
     connectWallet: 'Kết nối ví',
     connecting: 'Đang kết nối...',
-    instalMetamask: 'Cài đặt MetaMask',
+    instalMetamask: 'Kết nối',
     settings: 'Cài đặt',
     darkMode: 'Chế độ tối',
     lightMode: 'Chế độ sáng',

@@ -1,0 +1,129 @@
+/* ZuniLogo styles and animations */
+.logo-container {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  padding: 5px;
+}
+
+.logo-container:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Gradient text effect */
+.logo-text {
+  font-weight: bold;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+/* Sparkle effect on hover */
+.logo-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(circle at 20% 35%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 3%),
+    radial-gradient(circle at 75% 44%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 2%),
+    radial-gradient(circle at 46% 52%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 2.5%),
+    radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 2%);
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+.logo-container:hover::after {
+  opacity: 1;
+}
+
+/* Subtle flash effect */
+@keyframes logoFlash {
+  0% {
+    filter: brightness(1);
+  }
+  25% {
+    filter: brightness(1.2);
+  }
+  50% {
+    filter: brightness(1);
+  }
+  75% {
+    filter: brightness(1.1);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.logo-container:hover .logo-text {
+  animation: logoFlash 1.5s ease-in-out;
+}
+
+/* Small reload icon hint */
+.logo-reload-hint {
+  position: absolute;
+  font-size: 0.65rem;
+  top: 0;
+  right: -0.8rem;
+  opacity: 0;
+  transform: translateY(-100%) rotate(0deg);
+  transition: all 0.3s ease;
+  color: #c084fc;
+}
+
+.logo-container:hover .logo-reload-hint {
+  opacity: 1;
+  transform: translateY(-65%) rotate(-20deg);
+}
+
+/* For older browsers that don't support some features */
+@supports not (background-clip: text) {
+  .logo-text {
+    color: #c084fc;
+  }
+}
+
+/* Styles for clicked state */
+.logo-clicked {
+  transform: scale(1.1);
+  animation: logoGlow 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 0px rgba(192, 132, 252, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(192, 132, 252, 0.9));
+  }
+  100% {
+    filter: drop-shadow(0 0 25px rgba(192, 132, 252, 0));
+  }
+}
+
+/* Page fade-out animation */
+.page-fade-out {
+  animation: pageFadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+} 

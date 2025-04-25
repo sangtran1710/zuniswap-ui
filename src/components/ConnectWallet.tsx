@@ -1,33 +1,37 @@
-import { useWalletContext } from '../contexts/WalletContext';
+import { useWagmi } from '../hooks/useWagmi';
+import { useGlobalStore } from '../store/useGlobalStore';
 
 const ConnectWallet = () => {
   const { 
     address, 
     isConnected, 
-    isLoading, 
-    isMetaMaskInstalled, 
-    connectWallet, 
+    isPending,
+    isMetaMaskAvailable, 
     disconnectWallet 
-  } = useWalletContext();
+  } = useWagmi();
+  
+  const { openWalletModal } = useGlobalStore();
+
+  const handleOpenWalletModal = () => {
+    openWalletModal();
+  };
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  if (!isMetaMaskInstalled) {
+  if (!isMetaMaskAvailable && !isConnected) {
     return (
-      <a 
-        href="https://metamask.io/download/" 
-        target="_blank" 
-        rel="noopener noreferrer"
+      <button 
         className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF] hover:bg-[#FB58FF] text-white font-medium transition-colors"
+        onClick={handleOpenWalletModal}
       >
-        Install MetaMask
-      </a>
+        Connect
+      </button>
     );
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <button 
         className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF]/70 text-white font-medium cursor-not-allowed"
@@ -53,7 +57,7 @@ const ConnectWallet = () => {
   return (
     <button 
       className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF] hover:bg-[#FB58FF] text-white font-medium transition-colors"
-      onClick={connectWallet}
+      onClick={handleOpenWalletModal}
     >
       Connect
     </button>
