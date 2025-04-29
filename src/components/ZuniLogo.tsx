@@ -31,7 +31,7 @@ const ZuniLogo = () => {
       whileTap={{ scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <span className="logo-text bg-gradient-to-r from-zuni-secondary to-zuni-accent">
+      <span className="logo-text bg-gradient-to-r from-[#4338CA] to-[#3B82F6]">
         ZuniSwap
       </span>
       

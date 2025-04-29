@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useGlobalStore } from '../store/useGlobalStore';
 
 // Import token icons
 import ethIcon from '../assets/icons/eth.png';
@@ -16,8 +17,9 @@ const tokens = [
 ];
 
 const Background: React.FC = () => {
+  const { isDarkMode } = useGlobalStore();
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+    <div className={`fixed inset-0 overflow-hidden pointer-events-none ${isDarkMode ? 'backdrop-blur-2xl bg-black/20' : 'bg-white'}`} style={{ opacity: isDarkMode ? 1 : 0.3 }}>
       {tokens.map((token, index) => (
         <motion.div
           key={index}
@@ -38,11 +40,11 @@ const Background: React.FC = () => {
           }}
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-800/30 rounded-full blur-[32px]" />
+            <div className={`absolute inset-0 rounded-full blur-[80px] ${isDarkMode ? 'bg-gradient-to-r from-blue-500/30 to-purple-800/30' : 'bg-gradient-to-r from-pink-400/2 to-blue-400/2'}`} />
             <img 
               src={token.src} 
               alt=""
-              className="w-12 h-12 blur-3xl opacity-30" 
+              className={`w-16 h-16 blur-[60px] ${isDarkMode ? 'opacity-35' : 'opacity-5'}`} 
               onError={(e) => {
                 if (!e.currentTarget.src.includes("default.png")) {
                   e.currentTarget.onerror = null;

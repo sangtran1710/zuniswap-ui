@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SwapCard from '../components/SwapCard';
 import BackgroundIcons from '../components/BackgroundIcons';
 import FooterText from '../components/FooterText';
@@ -7,6 +8,8 @@ import { theme } from '../styles/theme';
 import '../components/IntroAnimation.css';
 
 const Home = () => {
+  const { t } = useTranslation();
+  
   // Animation states
   const [showFirstLine, setShowFirstLine] = useState(false);
   const [showSecondLine, setShowSecondLine] = useState(false);
@@ -82,13 +85,13 @@ const Home = () => {
             className={`${showFirstLine ? 'title-first-line-visible' : 'cinematic-text-hidden'}`}
             style={{ animationDuration: '0.7s' }} // Faster animation
           >
-            Swap anytime,
+            {t('swap.swapAnytime')}
           </div>
           <div 
             className={`${showSecondLine ? 'title-second-line-visible' : 'cinematic-text-hidden'}`}
             style={{ animationDuration: '0.7s' }} // Faster animation
           >
-            anywhere.
+            {t('swap.anywhere')}
           </div>
         </h1>
 
@@ -105,7 +108,7 @@ const Home = () => {
           }`}
           style={{ animationDuration: '0.7s', transitionDelay: '200ms' }} // Faster animation
         >
-          Inspired by Uniswap. Swap crypto across Ethereum and 11+ chains.
+          {t('swap.inspiredBy')}
         </p>
       </section>
 
@@ -130,14 +133,14 @@ const Home = () => {
       {/* Debug panel - press Ctrl+Shift+D to show */}
       {showDebug && (
         <div className="fixed bottom-4 right-4 z-50 bg-black/80 p-4 rounded-lg text-white">
-          <h4 className="text-sm font-bold mb-2">Debug Controls</h4>
+          <h4 className="text-sm font-bold mb-2">{t('debug.debugControls')}</h4>
           <button 
             onClick={resetAnimation}
             className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
           >
-            Reset Animation
+            {t('debug.resetAnimation')}
           </button>
-          <div className="text-xs mt-2 text-gray-400">Press Ctrl+Shift+D to hide</div>
+          <div className="text-xs mt-2 text-gray-400">{t('debug.pressToHide')}</div>
         </div>
       )}
     </div>

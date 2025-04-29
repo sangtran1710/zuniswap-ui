@@ -1,3 +1,64 @@
+/* Theme variables */
+:root {
+  /* Dark theme variables (default) */
+  --background-color: #0D111C;
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --card-background: rgba(19, 26, 42, 0.8);
+  --card-border: rgba(60, 65, 80, 0.3);
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --primary-color: #FF007A;
+  --accent-color: #8A2BE2;
+  --gradient-background: linear-gradient(135deg, rgba(13, 17, 28, 0.95) 0%, rgba(25, 33, 52, 0.95) 100%);
+  --gradient-button: linear-gradient(to right, #FF007A, #8A2BE2);
+  --button-text: white;
+  --input-background: rgba(19, 26, 42, 0.5);
+  --input-border: rgba(60, 65, 80, 0.3);
+  --hover-background: rgba(60, 65, 80, 0.3);
+  --modal-background: rgba(19, 26, 42, 0.95);
+  --dropdown-background: #191B1F;
+  --dropdown-hover: #2C2F36;
+  --token-item-hover: rgba(60, 65, 80, 0.3);
+}
+
+/* Light theme variables - giống Uniswap */
+[data-theme="light"] {
+  --background-color: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --card-background: rgba(255, 255, 255, 1);
+  --card-border: rgba(230, 230, 230, 1);
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --primary-color: #FF007A;
+  --accent-color: #8A2BE2;
+  --gradient-background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(250, 250, 250, 1) 100%);
+  --gradient-button: linear-gradient(to right, #FF007A, #8A2BE2);
+  --button-text: white;
+  --input-background: rgba(255, 255, 255, 1);
+  --input-border: rgba(210, 210, 210, 0.5);
+  --hover-background: rgba(245, 245, 245, 0.8);
+  --modal-background: rgba(255, 255, 255, 1);
+  --dropdown-background: #FFFFFF;
+  --dropdown-hover: #F5F5F5;
+  --token-item-hover: rgba(245, 245, 245, 0.8);
+}
+
+/* Auto theme inherits from system preference */
+[data-theme="auto"] {
+  color-scheme: light dark;
+}
+
+/* Apply theme to body */
+body.dark-theme {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+}
+
+body.light-theme {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+}
+
 /* Zuniswap custom styles */
 .gradient-bg {
   background: var(--gradient-background);
@@ -20,6 +81,7 @@
 
 .token-input {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* Card styles */
@@ -83,5 +145,151 @@
   100% {
     opacity: 0;
     transform: scale(0.98);
+  }
+}
+
+/* Animation classes cho từng phần tử */
+.swap-widget-animate {
+  animation: swapWidgetFadeInSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+  animation-delay: 0s !important; /* Xuất hiện đầu tiên */
+  transform: translateY(80px) !important; /* Đặt vị trí ban đầu */
+  opacity: 0 !important; /* Ẩn ban đầu */
+  will-change: transform, opacity; /* Tối ưu hóa hiệu suất animation */
+}
+
+.header-animate {
+  animation: headerFadeInSlideUp 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 0.2s; /* Xuất hiện sau Swap Widget */
+  opacity: 0; /* Ẩn ban đầu */
+}
+
+.background-animate {
+  animation: backgroundFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 0.4s; /* Xuất hiện cuối cùng */
+  opacity: 0; /* Ẩn ban đầu */
+}
+
+/* Ngăn thanh cuộn xuất hiện trong quá trình animation */
+html.animating,
+body.animating {
+  overflow: hidden !important;
+  margin-right: 0 !important; /* Ngăn việc dịch chuyển nội dung khi thanh cuộn biến mất */
+  width: 100% !important;
+}
+
+/* Animation cho Swap Widget - khoảng cách slide dài hơn */
+@keyframes swapWidgetFadeInSlideUp {
+  0% {
+    opacity: 0 !important;
+    transform: translateY(80px) !important; /* Khoảng cách dài hơn */
+  }
+  100% {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
+/* Animation cho Header */
+@keyframes headerFadeInSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation cho Background */
+@keyframes backgroundFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Animation cho Token Background */
+.token-background {
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  filter: blur(3px); /* Tăng blur mạnh hơn */
+  opacity: 0.7; /* Giảm opacity để không gây rối mắt */
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(5px); /* Thêm backdrop blur cho toàn bộ background */
+}
+
+.token-float {
+  animation-name: tokenFloat, tokenRotate;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+  animation-direction: alternate, normal;
+  will-change: transform, opacity, filter;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1)) blur(2px); /* Tăng blur mạnh hơn */
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 0.5px;
+  /* Đảm bảo token không bị giới hạn kích thước */
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+@keyframes tokenFloat {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+    filter: blur(2px); /* Tăng blur mạnh hơn */
+  }
+  25% {
+    transform: translateY(-15px) translateX(10px) rotate(45deg) scale(1.03);
+    filter: blur(3px); /* Tăng blur mạnh hơn */
+  }
+  50% {
+    transform: translateY(5px) translateX(-8px) rotate(90deg) scale(0.98);
+    filter: blur(4px); /* Tăng blur mạnh hơn */
+  }
+  75% {
+    transform: translateY(12px) translateX(5px) rotate(135deg) scale(1.01);
+    filter: blur(3px); /* Tăng blur mạnh hơn */
+  }
+  100% {
+    transform: translateY(-8px) translateX(3px) rotate(180deg) scale(1);
+    filter: blur(2px); /* Tăng blur mạnh hơn */
+  }
+}
+
+@keyframes tokenRotate {
+  0% {
+    filter: brightness(1);
+    opacity: 0.7;
+  }
+  25% {
+    filter: brightness(1.1);
+    opacity: 0.8;
+  }
+  50% {
+    filter: brightness(0.95);
+    opacity: 0.75;
+  }
+  75% {
+    filter: brightness(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    filter: brightness(1);
+    opacity: 0.7;
   }
 }

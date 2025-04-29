@@ -18,9 +18,32 @@ export function useWagmi() {
     console.log('Connecting to wallet with connector:', connector.name, 'Ready status:', connector.ready);
     console.log('All available connectors:', connectors.map(c => ({name: c.name, ready: c.ready})));
     
-    if (!connector.ready) {
-      console.error(`Cannot connect - ${connector.name} is not ready`);
-      return;
+    // Kiểm tra đặc biệt cho MetaMask
+    if (connector.id === 'metaMask' || connector.name === 'MetaMask') {
+      if (typeof window.ethereum === 'undefined') {
+        console.error('MetaMask không được cài đặt');
+        alert('Vui lòng cài đặt MetaMask để tiếp tục');
+        // Mở trang download MetaMask
+        window.open('https://metamask.io/download/', '_blank');
+        return;
+      }
+      
+      if (!window.ethereum.isMetaMask) {
+        console.error('Provider không phải là MetaMask');
+        alert('Vui lòng sử dụng trình duyệt có cài đặt MetaMask');
+        return;
+      }
+      
+      // Kiểm tra đăng nhập và yêu cầu đăng nhập nếu chưa
+      if (!window.ethereum.selectedAddress) {
+        try {
+          console.log('Requesting MetaMask accounts...');
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+        } catch (err) {
+          console.error('Lỗi yêu cầu tài khoản MetaMask:', err);
+          return;
+        }
+      }
     }
     
     try {

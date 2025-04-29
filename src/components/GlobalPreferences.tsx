@@ -31,12 +31,12 @@ const GlobalPreferences: React.FC<GlobalPreferencesProps> = ({ className }) => {
 
       <Transition
         as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
+        enter=""
+        enterFrom=""
+        enterTo=""
+        leave=""
+        leaveFrom=""
+        leaveTo=""
       >
         <Menu.Items className="absolute right-0 mt-2 w-72 origin-top-right rounded-2xl bg-[#0D111C] border border-[#2E2F32] shadow-lg focus:outline-none divide-y divide-[#2E2F32]">
           {/* Theme Section */}

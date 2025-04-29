@@ -10,12 +10,12 @@
   --text-secondary: #475569;
   --text-tertiary: #64748b;
   
-  --primary-color: #7e22ce;
-  --primary-color-hover: #6b21a8;
-  --secondary-color: #c084fc;
-  --secondary-color-hover: #a855f7;
-  --accent-color: #ec4899;
-  --accent-color-hover: #db2777;
+  --primary-color: #4F46E5;
+  --primary-color-hover: #4338CA;
+  --secondary-color: #6366F1;
+  --secondary-color-hover: #4F46E5;
+  --accent-color: #3B82F6;
+  --accent-color-hover: #2563EB;
 
   --button-text: #ffffff;
   --success-color: #10b981;
@@ -32,9 +32,12 @@
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   
   /* Gradients */
-  --gradient-background: radial-gradient(circle at center, rgba(192, 132, 252, 0.1), rgba(126, 34, 206, 0.05));
+  --gradient-background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.05));
   --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
-  --gradient-button: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  --gradient-button: linear-gradient(135deg, #4F46E5, #818CF8);
+  --gradient-text: linear-gradient(to right, #4F46E5, #60A5FA);
+  --gradient-border: linear-gradient(to right, #4F46E5, #60A5FA);
+  --gradient-logo: linear-gradient(to right, #4338CA, #3B82F6);
 }
 
 .dark {
@@ -49,13 +52,13 @@
   --text-secondary: #e2e8f0;
   --text-tertiary: #cbd5e1;
   
-  /* Primary colors remain the same for brand consistency */
-  --primary-color: #7e22ce;
-  --primary-color-hover: #9333ea;
-  --secondary-color: #c084fc;
-  --secondary-color-hover: #d8b4fe;
-  --accent-color: #ec4899;
-  --accent-color-hover: #f472b6;
+  /* Primary colors updated for tech-style blue-purple */
+  --primary-color: #4F46E5;
+  --primary-color-hover: #6366F1;
+  --secondary-color: #6366F1;
+  --secondary-color-hover: #818CF8;
+  --accent-color: #3B82F6;
+  --accent-color-hover: #60A5FA;
   
   --button-text: #ffffff;
   --success-color: #10b981;
@@ -72,7 +75,10 @@
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   
   /* Gradients */
-  --gradient-background: radial-gradient(circle at center, rgba(126, 34, 206, 0.15), rgba(30, 27, 75, 0.8));
+  --gradient-background: radial-gradient(circle at center, rgba(79, 70, 229, 0.15), rgba(30, 27, 75, 0.8));
   --gradient-card: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.6));
-  --gradient-button: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  --gradient-button: linear-gradient(135deg, #4338CA, #60A5FA);
+  --gradient-text: linear-gradient(to right, #818CF8, #93C5FD);
+  --gradient-border: linear-gradient(to right, #4F46E5, #60A5FA);
+  --gradient-logo: linear-gradient(to right, #818CF8, #3B82F6);
 } 

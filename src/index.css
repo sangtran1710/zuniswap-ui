@@ -34,12 +34,6 @@
 
   body {
     @apply bg-[var(--background)] text-[var(--foreground)];
-    background: radial-gradient(
-      circle at center,
-      theme(colors.blue.500 / 15%) 0%,
-      theme(colors.purple.500 / 15%) 25%,
-      rgba(15, 23, 42, 0.9) 100%
-    );
     min-height: 100vh;
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -107,15 +101,21 @@
 
   .gradient-button {
     @apply relative overflow-hidden;
-    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    background: linear-gradient(to right, #4338CA, #60A5FA);
   }
 
   .gradient-button:hover {
-    background: linear-gradient(to right, #2563eb, #7c3aed);
+    background: linear-gradient(to right, #3730A3, #3B82F6);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #4338CA, #60A5FA);
   }
 
   .gradient-border {
-    @apply relative rounded-xl p-[1px] bg-gradient-to-r from-blue-500 to-purple-500;
+    @apply relative rounded-xl p-[1px] bg-gradient-to-r from-indigo-500 to-blue-500;
   }
 
   .gradient-border-content {
@@ -214,6 +214,7 @@
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
@@ -221,26 +222,35 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Gradient background from dark gray (#1a1a1a) to black (#000000) */
-body {
-  @apply min-h-screen;
-  background: linear-gradient(to bottom, #1a1a1a, #000000) no-repeat center center fixed;
-  background-size: cover;
-}
-
-/* Glass effect utility */
-.glass-effect {
-  @apply bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-30;
-}
-
-/* Floating tokens animation */
+/* Animation classes for floating tokens */
 @keyframes float {
-  0%, 100% { 
-    transform: translate(0, 0); 
-  }
-  50% { 
-    transform: translate(10px, -10px); 
-  }
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-10px) translateX(5px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+@keyframes float-slow {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-15px) translateX(-8px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+@keyframes float-slower {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-20px) translateX(10px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 9s ease-in-out infinite;
 }
 
 /* Toast animation */
@@ -257,10 +267,6 @@ body {
 
 .animate-slide-in {
   animation: slideIn 0.3s ease-out forwards;
-}
-
-.animate-float {
-  animation: float 8s ease-in-out infinite;
 }
 
 @keyframes glow {
@@ -327,8 +333,19 @@ body {
   box-sizing: border-box;
 }
 
-body {
-  background-color: #0D0E12;
-  color: white;
-  min-height: 100vh;
+/* Responsive adjustments for UI elements */
+@media (max-width: 768px) {
+  :root {
+    --widget-width: 90vw !important;
+    --title-top-spacing: 48px !important;
+    --title-bottom-spacing: 24px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --widget-width: 440px !important;
+    --title-top-spacing: 64px !important;
+    --title-bottom-spacing: 36px !important;
+  }
 }

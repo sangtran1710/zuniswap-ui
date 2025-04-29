@@ -17,21 +17,31 @@
   },
   "wallet": {
     "connect": "Connect Wallet",
+    "connectWallet": "Connect a wallet",
     "disconnect": "Disconnect",
     "connected": "Connected",
-    "connecting": "Connecting..."
+    "connecting": "Connecting...",
+    "popular": "Popular",
+    "termsNotice": "By connecting a wallet, you agree to Zuniswap's Terms of Service and consent to its Privacy Policy"
+  },
+  "tabs": {
+    "swap": "Swap",
+    "limit": "Limit",
+    "send": "Send",
+    "buy": "Buy"
+  },
+  "landing": {
+    "getStarted": "Get Started"
   },
   "swap": {
-    "tabs": {
-      "swap": "Swap",
-      "limit": "Limit",
-      "send": "Send",
-      "buy": "Buy"
-    },
     "from": "From",
     "to": "To",
     "rate": "Exchange Rate",
     "fee": "Network Fee",
-    "swap": "Swap"
+    "swap": "Swap",
+    "youPay": "You pay",
+    "swapAnytime": "Swap anytime,",
+    "anywhere": "anywhere.",
+    "trade": "Trade crypto across Ethereum and 11+ chains"
   }
 } 

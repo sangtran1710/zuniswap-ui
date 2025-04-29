@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import { WalletProvider } from './contexts/WalletContext.tsx'
 import { ThemeProvider } from './contexts/ThemeContext.tsx'
+import { LanguageProvider } from './contexts/LanguageContext.tsx'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from './wagmi'
@@ -27,11 +28,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <WalletProvider>
-            <ThemeProvider>
-              <App />
-            </ThemeProvider>
-          </WalletProvider>
+          <LanguageProvider>
+            <WalletProvider>
+              <ThemeProvider>
+                <App />
+              </ThemeProvider>
+            </WalletProvider>
+          </LanguageProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </WagmiProvider>

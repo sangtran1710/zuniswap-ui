@@ -1,202 +1,272 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useGlobalStore } from '../../store/useGlobalStore';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useWagmi } from '../../hooks/useWagmi';
-import { theme } from '../../styles/theme';
+import { useConnect, useAccount, useDisconnect } from 'wagmi';
+import WalletConnectModal from '../WalletConnectModal';
 
-// Icons for wallets as React components
+// Helper function to shorten wallet address
+const shortenAddress = (address: string | undefined) => {
+  if (!address) return '';
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
+// SVG Components cho wallet icons
 const MetaMaskIcon = () => (
-  <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#F6F6F6' }}>
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.2857 1.90476L10.4762 7.14286L11.7143 4.28571L17.2857 1.90476Z" fill="#E17726"/>
-      <path d="M2.71429 1.90476L9.47619 7.14286L8.28571 4.28571L2.71429 1.90476Z" fill="#E27625"/>
-      <path d="M15.0476 13.3333L13.3333 16.1905L16.9048 17.1429L17.8571 13.3333H15.0476Z" fill="#E27625"/>
-      <path d="M2.14285 13.3333L3.09523 17.1429L6.66666 16.1905L4.95238 13.3333H2.14285Z" fill="#E27625"/>
-      <path d="M6.66668 8.57143L5.4762 10.4762L9.04763 10.4762L8.85715 6.66667L6.66668 8.57143Z" fill="#E27625"/>
-      <path d="M13.3333 8.57143L11.1428 6.66667L10.9524 10.4762L14.5238 10.4762L13.3333 8.57143Z" fill="#E27625"/>
-    </svg>
-  </div>
-);
-
-const WalletConnectIcon = () => (
-  <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#3B99FC' }}>
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.74145 8.49341C8.86588 6.39294 12.1349 6.39294 14.2593 8.49341L14.4635 8.69436C14.5656 8.79522 14.5656 8.95925 14.4635 9.06012L13.3492 10.1573C13.2981 10.2077 13.2147 10.2077 13.1637 10.1573L12.8815 9.87919C11.4361 8.4487 9.56457 8.4487 8.11916 9.87919L7.8144 10.1799C7.76336 10.2304 7.68002 10.2304 7.62897 10.1799L6.51467 9.08266C6.41258 8.9818 6.41258 8.81778 6.51467 8.71691L6.74145 8.49341ZM15.9678 10.1799L16.9716 11.171C17.0736 11.2719 17.0736 11.4359 16.9716 11.5368L13.2147 15.2444C13.0607 15.3967 12.8133 15.3967 12.6593 15.2444L10.0784 12.6947C10.0529 12.6694 10.0113 12.6694 9.98578 12.6947L7.40482 15.2444C7.25086 15.3967 7.00343 15.3967 6.84947 15.2444L3.0926 11.5368C2.99051 11.4359 2.99051 11.2719 3.0926 11.171L4.09632 10.1799C4.25029 10.0276 4.49772 10.0276 4.65168 10.1799L7.23264 12.7296C7.25811 12.7549 7.29974 12.7549 7.32521 12.7296L9.90617 10.1799C10.0601 10.0276 10.3076 10.0276 10.4615 10.1799L13.0425 12.7296C13.068 12.7549 13.1096 12.7549 13.1351 12.7296L15.716 10.1799C15.87 10.0276 16.1174 10.0276 15.9678 10.1799Z" fill="white"/>
-    </svg>
+  <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white">
+    <img 
+      src="/images/tokens/MetaMask-icon-Fox.svg" 
+      alt="MetaMask" 
+      className="w-8 h-8"
+    />
   </div>
 );
 
 const CoinbaseWalletIcon = () => (
-  <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#0052FF' }}>
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 3C6.14 3 3 6.14 3 10C3 13.86 6.14 17 10 17C13.86 17 17 13.86 17 10C17 6.14 13.86 3 10 3ZM10 13.2C8.24 13.2 6.8 11.76 6.8 10C6.8 8.24 8.24 6.8 10 6.8C11.76 6.8 13.2 8.24 13.2 10C13.2 11.76 11.76 13.2 10 13.2Z" fill="white"/>
-    </svg>
+  <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-[#0052FF]">
+    <img 
+      src="/images/tokens/coinbase-v2-svgrepo-com.svg" 
+      alt="Coinbase Wallet" 
+      className="w-8 h-8"
+    />
   </div>
 );
 
-const ConnectWalletModal: React.FC = () => {
-  const { t } = useTranslation();
-  const { isWalletModalOpen, closeWalletModal } = useGlobalStore();
-  const [connectionError, setConnectionError] = useState<string | null>(null);
-  const { 
-    connectWallet, 
-    isMetaMaskAvailable, 
-    isWalletConnectAvailable,
-    isCoinbaseWalletAvailable,
-    connectors,
-    isPending,
-    isConnected,
-    error
-  } = useWagmi();
+const WalletConnectIcon = () => (
+  <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-[#3B99FC]">
+    <img 
+      src="/images/tokens/walletconnect-logo.svg" 
+      alt="WalletConnect" 
+      className="w-7 h-7"
+    />
+  </div>
+);
 
-  // Reset error when modal opens
-  useEffect(() => {
-    if (isWalletModalOpen) {
-      setConnectionError(null);
-    }
-  }, [isWalletModalOpen]);
-
-  // Theo dõi trạng thái kết nối và đóng modal khi kết nối thành công
-  useEffect(() => {
-    if (isConnected && isWalletModalOpen) {
-      console.log('Connection successful, closing modal');
-      closeWalletModal();
-    }
-    
-    if (error) {
-      console.error('Connection error:', error);
-      setConnectionError(error.message || 'Lỗi kết nối không xác định');
-    }
-  }, [isConnected, isWalletModalOpen, closeWalletModal, error]);
-
-  const getConnectorByName = (name: string) => {
-    return connectors.find(connector => connector.name === name);
-  };
-
-  const handleConnect = async (connectorName: string) => {
-    setConnectionError(null);
-    const connector = getConnectorByName(connectorName);
-    console.log(`Trying to connect with ${connectorName}`, connector);
-    
-    if (connector) {
-      try {
-        await connectWallet(connector);
-      } catch (err) {
-        console.error(`Error connecting to ${connectorName}:`, err);
-        setConnectionError(err instanceof Error ? err.message : 'Lỗi kết nối không xác định');
-      }
-    } else {
-      console.error(`${connectorName} connector not found`);
-      setConnectionError(`Không tìm thấy connector ${connectorName}`);
-    }
-  };
-
-  const walletOptions = [
-    {
-      name: 'MetaMask',
-      icon: <MetaMaskIcon />,
-      onClick: () => handleConnect('MetaMask'),
-      disabled: !isMetaMaskAvailable || isPending,
-      status: isMetaMaskAvailable ? 'Detected' : 'Not detected',
-    },
-    {
-      name: 'WalletConnect',
-      icon: <WalletConnectIcon />,
-      onClick: () => handleConnect('WalletConnect'),
-      disabled: !isWalletConnectAvailable || isPending,
-      status: isWalletConnectAvailable ? '' : 'Not available',
-    },
-    {
-      name: 'Coinbase Wallet',
-      icon: <CoinbaseWalletIcon />,
-      onClick: () => handleConnect('Coinbase Wallet'),
-      disabled: !isCoinbaseWalletAvailable || isPending,
-      status: isCoinbaseWalletAvailable ? '' : 'Not available',
-    },
-  ];
-
-  if (!isWalletModalOpen) return null;
-
+// Helper function to get wallet icon based on connector ID
+const WalletIcon = ({ connectorId }: { connectorId: string }) => {
+  // Normalize connector ID to lowercase for comparison
+  const normalizedId = connectorId.toLowerCase();
+  
+  // Check for MetaMask variants
+  if (normalizedId.includes('metamask') || 
+      normalizedId === 'injected' || 
+      normalizedId === 'metaMask' ||
+      normalizedId === 'metamaskSDK') {
+    return <MetaMaskIcon />;
+  }
+  
+  // Check for WalletConnect variants
+  if (normalizedId.includes('walletconnect') || 
+      normalizedId === 'walletConnect' ||
+      normalizedId === 'wallet-connect') {
+    return <WalletConnectIcon />;
+  }
+  
+  // Check for Coinbase Wallet variants
+  if (normalizedId.includes('coinbase') || 
+      normalizedId === 'coinbaseWallet' ||
+      normalizedId === 'coinbasewallet' ||
+      normalizedId === 'wallet-link') {
+    return <CoinbaseWalletIcon />;
+  }
+  
+  // Nếu không nhận dạng được, hiển thị biểu tượng mặc định
+  console.log('No matching icon found for connectorId:', connectorId);
   return (
-    <AnimatePresence>
-      {isWalletModalOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={closeWalletModal}
-        >
-          <motion.div 
-            className="bg-[#13151A] rounded-xl w-full max-w-md overflow-hidden flex flex-col shadow-xl"
-            initial={{ scale: 0.9, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center px-5 py-4 relative">
-              <h2 className="text-xl font-bold text-white">
-                {isPending ? 'Đang kết nối...' : 'Kết nối ví'}
-              </h2>
-              <button 
-                className="absolute right-4 top-4 p-1 rounded-lg hover:bg-gray-800/50 transition-colors"
-                onClick={closeWalletModal}
-                aria-label="Close"
-              >
-                <XMarkIcon className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-            
-            {connectionError && (
-              <div className="mx-4 mb-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-red-200 text-sm">
-                {connectionError}
-              </div>
-            )}
-            
-            <div className="px-4 pb-4 space-y-2">
-              {walletOptions.map((wallet) => (
-                <button
-                  key={wallet.name}
-                  className={`w-full p-4 bg-[#212427] hover:bg-[#2C2F36] rounded-xl flex items-center justify-between
-                    ${wallet.disabled 
-                      ? 'opacity-80 cursor-not-allowed' 
-                      : 'cursor-pointer'
-                    } transition-all duration-200`}
-                  onClick={wallet.onClick}
-                  disabled={wallet.disabled || isPending}
-                >
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      {wallet.icon}
-                    </div>
-                    <span className="font-medium text-white ml-3">{wallet.name}</span>
-                  </div>
-                  
-                  {wallet.status && (
-                    <span className="text-sm text-gray-400">
-                      {wallet.status}
-                    </span>
-                  )}
-                  
-                  {isPending && wallet.name === 'WalletConnect' && (
-                    <span className="text-sm text-blue-400 animate-pulse">
-                      Đang kết nối...
-                    </span>
-                  )}
-                </button>
-              ))}
-              
-              <div className="mt-6 text-xs text-center text-gray-500 px-4">
-                Bằng việc kết nối ví, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-[#212427]">
+      <span className="text-white text-sm font-medium">?</span>
+    </div>
   );
 };
 
-export default ConnectWalletModal; 
+const ConnectWalletModal = () => {
+  const { t } = useTranslation();
+  const { isWalletModalOpen, closeWalletModal } = useGlobalStore();
+  const { connectors, connect, isPending, error } = useConnect();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showWalletConnectQR, setShowWalletConnectQR] = useState(false);
+  const [selectedConnector, setSelectedConnector] = useState<string | null>(null);
+  
+  // Handle errors and format them for display
+  useEffect(() => {
+    if (error) {
+      console.log('Connection error:', error);
+      
+      // Check if this is a user rejection error (code 4001)
+      if (error.message?.includes('User rejected') || 
+          error.message?.includes('user rejected') || 
+          error.message?.includes('User denied') || 
+          (error as any)?.code === 4001) {
+        setErrorMessage(t('wallet.userRejected', 'Bạn đã từ chối kết nối ví'));
+      } else {
+        setErrorMessage(error.message || 'Có lỗi khi kết nối ví');
+      }
+    } else {
+      setErrorMessage(null);
+    }
+  }, [error, t]);
+  
+  if (!isWalletModalOpen) return null;
+
+  return (
+    <>
+      {/* WalletConnect QR Modal - hiển thị ở trung tâm màn hình */}
+      <WalletConnectModal isOpen={showWalletConnectQR} onClose={() => setShowWalletConnectQR(false)} />
+      
+      {/* Wallet Connection Sidebar - hiển thị ở bên phải */}
+      <AnimatePresence>
+        {isWalletModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 flex justify-end bg-black/50 backdrop-blur-md"
+            onClick={closeWalletModal}
+          >
+            <motion.div 
+              className="bg-[#13151A] w-[360px] h-full overflow-y-auto flex flex-col shadow-xl border-l border-[#2C2F36] backdrop-blur-md bg-opacity-80"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">{t('wallet.connectWallet', 'Connect a wallet')}</h2>
+                  <button
+                    onClick={closeWalletModal}
+                    className="text-white/60 hover:text-white transition-colors"
+                  >
+                    <XMarkIcon className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {connectors.map((connector) => {
+                  // Luôn coi như connector sẵn sàng khi không xác định rõ trạng thái
+                  const isReady = connector.ready !== false;
+                  
+                  return (
+                    <button
+                      key={connector.id}
+                      onClick={() => {
+                        try {
+                          console.log(`Attempting to connect with ${connector.name}`, {
+                            connector,
+                            ready: connector.ready
+                          });
+                          
+                          // Clear previous error messages
+                          setErrorMessage(null);
+                          
+                          // Add special handling for MetaMask
+                          if (connector.id === 'metamaskSDK' || 
+                              connector.id === 'metaMask' || 
+                              connector.id.toLowerCase().includes('metamask')) {
+                            console.log('Using MetaMask connector with ID:', connector.id);
+                            
+                            // Handle CSP errors by wrapping the connect call in a try/catch
+                            try {
+                              connect({ connector });
+                              
+                              // Timeout to catch potential errors
+                              setTimeout(() => {
+                                if (error) {
+                                  console.log('MetaMask connection error after timeout:', error);
+                                  
+                                  // Check if this is a user rejection error
+                                  const metaMaskError = error as any;
+                                  if (metaMaskError?.code === 4001 || 
+                                      metaMaskError?.message?.includes('User rejected') || 
+                                      metaMaskError?.message?.includes('user rejected')) {
+                                    console.log('User rejected MetaMask connection request');
+                                    setErrorMessage(t('wallet.userRejected', 'Kết nối bị từ chối. Vui lòng thử lại.'));
+                                  } else {
+                                    console.error('MetaMask connection error:', metaMaskError);
+                                    setErrorMessage(metaMaskError?.message || 'Có lỗi khi kết nối với ví');
+                                  }
+                                }
+                              }, 0);
+                              return;
+                            } catch (metaMaskError: any) {
+                              console.error('MetaMask connection error:', metaMaskError);
+                              setErrorMessage(metaMaskError?.message || 'Có lỗi khi kết nối với ví');
+                              return;
+                            }
+                          }
+                          
+                          try {
+                            // Nếu là WalletConnect, hiển thị QR code
+                            if (connector.id === 'walletConnect' || connector.name === 'WalletConnect') {
+                              setSelectedConnector(connector.id);
+                              setShowWalletConnectQR(true);
+                              return;
+                            }
+                            
+                            // Các connector khác
+                            connect({ connector });
+                          } catch (err: any) {
+                            console.error(`Error connecting to ${connector.name}:`, err);
+                            setErrorMessage(err?.message || 'Có lỗi khi kết nối với ví');
+                          }
+                        } catch (e) {
+                          console.error(`Error connecting to ${connector.name}:`, e);
+                          setErrorMessage((e as Error)?.message || 'Có lỗi khi kết nối với ví');
+                        }
+                      }}
+                      disabled={!isReady || isPending}
+                      className={`w-full p-4 bg-[#1C1E24] hover:bg-[#2C2F36] rounded-xl flex items-center justify-between
+                        ${(!isReady || isPending) ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'} 
+                        transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#7C4DFF]/50 mb-3 border border-[#2C2F36] hover:border-[#3C3F46]`}
+                    >
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <WalletIcon connectorId={connector.id} />
+                        </div>
+                        <span className="font-medium text-white ml-3 text-base">{connector.name}</span>
+                      </div>
+                      
+                      {connector.name === 'MetaMask' && (
+                        <span className="text-xs px-2 py-1 bg-[#7C4DFF]/10 text-[#7C4DFF] rounded-full font-medium">
+                          {t('wallet.popular', 'Popular')}
+                        </span>
+                      )}
+                      
+                      {!isReady && (
+                        <span className="text-sm text-[#A0A0A0] px-2 py-1 bg-[#2C2F36]/50 rounded-md">
+                          {t('wallet.notAvailable', 'Not Available')}
+                        </span>
+                      )}
+                      
+                      {isPending && (
+                        <span className="text-sm text-[#7C4DFF] px-2 py-1 bg-[#7C4DFF]/10 rounded-md animate-pulse">
+                          {t('common.connecting', 'Connecting...')}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+                
+                {errorMessage && (
+                  <div className="error mt-2 p-3 bg-[#FF8A80]/10 border border-[#FF8A80]/30 rounded-lg text-[#FF8A80] text-sm">
+                    {errorMessage}
+                  </div>
+                )}
+                
+                <div className="mt-8 text-xs text-[#A0A0A0] px-2 border-t border-[#2C2F36] pt-4">
+                  {t('wallet.termsNotice', 'By connecting a wallet, you agree to Zuniswap\'s Terms of Service and consent to its Privacy Policy')}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+export default ConnectWalletModal;

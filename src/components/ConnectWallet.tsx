@@ -1,7 +1,9 @@
 import { useWagmi } from '../hooks/useWagmi';
 import { useGlobalStore } from '../store/useGlobalStore';
+import { useTranslation } from 'react-i18next';
 
 const ConnectWallet = () => {
+  const { t } = useTranslation();
   const { 
     address, 
     isConnected, 
@@ -10,10 +12,14 @@ const ConnectWallet = () => {
     disconnectWallet 
   } = useWagmi();
   
-  const { openWalletModal } = useGlobalStore();
+  const { openWalletModal, toggleAccountSidebar } = useGlobalStore();
 
   const handleOpenWalletModal = () => {
     openWalletModal();
+  };
+
+  const handleToggleAccountSidebar = () => {
+    toggleAccountSidebar();
   };
 
   const formatAddress = (address: string) => {
@@ -23,10 +29,10 @@ const ConnectWallet = () => {
   if (!isMetaMaskAvailable && !isConnected) {
     return (
       <button 
-        className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF] hover:bg-[#FB58FF] text-white font-medium transition-colors"
+        className="px-3 py-1.5 text-sm rounded-full bg-[#7C4DFF] hover:bg-[#5B2ED9] text-white font-medium transition-all"
         onClick={handleOpenWalletModal}
       >
-        Connect
+        {t('common.instalMetamask')}
       </button>
     );
   }
@@ -34,10 +40,10 @@ const ConnectWallet = () => {
   if (isPending) {
     return (
       <button 
-        className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF]/70 text-white font-medium cursor-not-allowed"
+        className="px-3 py-1.5 text-sm rounded-full bg-[#7C4DFF]/70 text-white font-medium cursor-not-allowed"
         disabled
       >
-        <span className="animate-pulse">Connecting...</span>
+        <span className="animate-pulse">{t('common.connecting')}</span>
       </button>
     );
   }
@@ -45,8 +51,8 @@ const ConnectWallet = () => {
   if (isConnected && address) {
     return (
       <button 
-        className="px-3 py-1.5 text-sm rounded-full bg-[#1C2537] hover:bg-[#252d3f] text-white font-medium transition-colors flex items-center gap-1.5"
-        onClick={disconnectWallet}
+        className="px-3 py-1.5 text-sm rounded-full bg-[#13151A] hover:bg-[#1C1E24] text-white font-medium transition-colors flex items-center gap-1.5 border border-[#00E5FF]/30 focus:border-[#00E5FF]"
+        onClick={handleToggleAccountSidebar}
       >
         <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
         {formatAddress(address)}
@@ -56,10 +62,10 @@ const ConnectWallet = () => {
 
   return (
     <button 
-      className="px-3 py-1.5 text-sm rounded-full bg-[#FC72FF] hover:bg-[#FB58FF] text-white font-medium transition-colors"
+      className="px-3 py-1.5 text-sm rounded-full bg-[#7C4DFF] hover:bg-[#5B2ED9] text-white font-medium transition-all"
       onClick={handleOpenWalletModal}
     >
-      Connect
+      {t('common.connect')}
     </button>
   );
 };

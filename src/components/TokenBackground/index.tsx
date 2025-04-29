@@ -1,7 +1,63 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './TokenBackground.css';
 
-// Define interfaces for token data
+// Token colors for SVG generation
+const tokenColors: Record<string, string> = {
+  ETH: '#627EEA',
+  BTC: '#F7931A',
+  SOL: '#14F195',
+  ADA: '#0033AD',
+  BNB: '#F3BA2F', 
+  DOT: '#E6007A',
+  LINK: '#2A5ADA',
+  XRP: '#23292F',
+  AVAX: '#E84142',
+  MATIC: '#8247E5',
+  UNI: '#FF007A',
+  TRX: '#FF0013',
+  ATOM: '#46509F',
+  LTC: '#345D9D',
+  NEAR: '#000000',
+  ALGO: '#000000',
+  DOGE: '#C2A633',
+  ZUNI: '#4F46E5',
+};
+
+// Generate SVG data URL for each token
+const generateTokenLogo = (symbol: string, color: string): string => {
+  const svg = `
+    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" fill="${color}" stroke="#fff" stroke-width="1" />
+      <text x="50" y="55" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${symbol}</text>
+    </svg>
+  `;
+  
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
+
+// Logo mapping
+const logoMap: Record<string, string> = {
+  ETH: generateTokenLogo('ETH', tokenColors.ETH),
+  BTC: generateTokenLogo('BTC', tokenColors.BTC),
+  SOL: generateTokenLogo('SOL', tokenColors.SOL),
+  ADA: generateTokenLogo('ADA', tokenColors.ADA),
+  BNB: generateTokenLogo('BNB', tokenColors.BNB),
+  DOT: generateTokenLogo('DOT', tokenColors.DOT),
+  LINK: generateTokenLogo('LINK', tokenColors.LINK),
+  XRP: generateTokenLogo('XRP', tokenColors.XRP),
+  AVAX: generateTokenLogo('AVAX', tokenColors.AVAX),
+  MATIC: generateTokenLogo('MATIC', tokenColors.MATIC),
+  UNI: generateTokenLogo('UNI', tokenColors.UNI),
+  TRX: generateTokenLogo('TRX', tokenColors.TRX),
+  ATOM: generateTokenLogo('ATOM', tokenColors.ATOM),
+  LTC: generateTokenLogo('LTC', tokenColors.LTC),
+  NEAR: generateTokenLogo('NEAR', tokenColors.NEAR),
+  ALGO: generateTokenLogo('ALGO', tokenColors.ALGO),
+  DOGE: generateTokenLogo('DOGE', tokenColors.DOGE),
+  ZUNI: generateTokenLogo('ZUNI', tokenColors.ZUNI)
+};
+
+// Simplified token data interface
 interface TokenData {
   name: string;
   symbol: string;
@@ -9,36 +65,28 @@ interface TokenData {
   change: number;
 }
 
+// Simplified state interface
 interface TokenState extends TokenData {
   id: number;
   x: number;
   y: number;
-  size: number;
-  speedX: number;
-  speedY: number;
-  animationDelay: number;
-  floatDuration: number;
-  blurAmount: number;
-  amplitude: {
-    x: number;
-    y: number;
+  sizeCategory: 'small' | 'medium' | 'large';
+  isHovered: boolean;
+  scaleVariation: number; // Add random scale variation
+  baseSize: number; // Add variable base size
+  animationDuration: number; // Add variable animation duration
+  floatDistance: number; // Add variable float distance
+  delay: number; // Random start delay for animations
+  pathParams: { // Parameters for controlling animation path
+    amplitude: number;
+    frequency: number;
+    phase: number;
   };
-  frequency: {
-    x: number;
-    y: number;
-  };
-  phase: {
-    x: number;
-    y: number;
-  };
-  time: number;
-  lastUpdateTime: number;
+  time: number; // Animation timing parameter
+  timeIncrement: number; // Controls animation speed
+  direction: number; // Direction of movement (1 or -1)
+  easing: (t: number) => number; // Easing function for animations
 }
-
-// Easing function for smoother animation
-const easeInOutCubic = (t: number): number => {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-};
 
 // Token data with name, symbol, color, and initial random change percentage
 const tokenData: TokenData[] = [
@@ -59,7 +107,7 @@ const tokenData: TokenData[] = [
   { name: 'Near', symbol: 'NEAR', color: '#000000', change: Math.random() * 25 - 10 },
   { name: 'Algorand', symbol: 'ALGO', color: '#000000', change: Math.random() * 25 - 10 },
   { name: 'Dogecoin', symbol: 'DOGE', color: '#C2A633', change: Math.random() * 25 - 10 },
-  { name: 'Zuni', symbol: 'ZUNI', color: '#9333EA', change: Math.random() * 25 - 10 },
+  { name: 'Zuni', symbol: 'ZUNI', color: '#4F46E5', change: Math.random() * 25 - 10 },
 ];
 
 const TokenBackground: React.FC = () => {
@@ -67,67 +115,166 @@ const TokenBackground: React.FC = () => {
   const [hoveredToken, setHoveredToken] = useState<number | null>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const throttleRef = useRef<number>(0);
-  
-  // Animation update throttling - milliseconds between updates
-  const THROTTLE_TIME = 50;
+
+  // Animation loop function
+  const animate = useCallback(() => {
+    setTokens(prevTokens => {
+      return prevTokens.map(token => {
+        // Skip animation for hovered tokens
+        if (token.isHovered) {
+          return token;
+        }
+        
+        // Increment time parameter
+        const newTime = token.time + token.timeIncrement;
+        
+        // Calculate new position based on time and path parameters
+        const { amplitude, frequency, phase } = token.pathParams;
+        
+        // Use the easing function and time to create a smooth motion
+        const t = token.easing(Math.sin(newTime) * 0.5 + 0.5);
+        
+        // Calculate horizontal and vertical displacement
+        const xOffset = amplitude * Math.sin(frequency * newTime + phase) * token.direction * 10;
+        const yOffset = -token.floatDistance * t; // Negative to move upwards
+        
+        // Apply new position by modifying the element directly
+        const tokenEl = document.getElementById(`token-${token.id}`);
+        if (tokenEl) {
+          // Apply transform for smooth animation
+          tokenEl.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${token.scaleVariation})`;
+        }
+        
+        return {
+          ...token,
+          time: newTime,
+        };
+      });
+    });
+    
+    // Continue animation loop
+    animationFrameRef.current = requestAnimationFrame(animate);
+  }, []);
 
   useEffect(() => {
-    // Initialize token positions when component mounts
+    // Initialize token positions in a grid-like pattern
     const initializeTokens = () => {
       if (!backgroundRef.current) return;
       
       const containerWidth = backgroundRef.current.clientWidth;
       const containerHeight = backgroundRef.current.clientHeight;
+      
+      // Calculate grid cells - use larger cells for more spread out tokens
+      const gridCellSize = 300; // Even larger grid cell size for more spacing
+      const cols = Math.ceil(containerWidth / gridCellSize);
+      const rows = Math.ceil(containerHeight / gridCellSize);
+      
+      // Create token objects with grid-based positioning
+      const initializedTokens: TokenState[] = [];
+      let tokenId = 0;
+      
+      // Fill grid with tokens, but skip cells randomly for sparser distribution
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          // Skip 70% of cells for an even sparser distribution like Uniswap
+          if (Math.random() < 0.7) continue;
+          
+          if (tokenId >= tokenData.length) break; // Limit to actual tokens
+          
+          // Use token data without cycling to ensure variety
+          const tokenIndex = tokenId % tokenData.length;
+          const token = tokenData[tokenIndex];
+          
+          // Determine size category with modified distribution: 60% small, 30% medium, 10% large
+          const sizeCategoryRand = Math.random();
+          let sizeCategory: 'small' | 'medium' | 'large';
+          let baseSize: number;
+          let animationDuration: number;
+          let floatDistance: number;
+          
+          if (sizeCategoryRand < 0.6) {
+            sizeCategory = 'small'; // 60% chance of small
+            // Make small tokens range from 20-30px
+            baseSize = 20 + Math.random() * 10;
+            // Slower animation for smaller tokens (10-15s)
+            animationDuration = 10 + Math.random() * 5;
+            // Smaller float distance for less movement
+            floatDistance = 5 + Math.random() * 5;
+          } else if (sizeCategoryRand < 0.9) {
+            sizeCategory = 'medium'; // 30% chance of medium
+            // Medium range 35-45px
+            baseSize = 35 + Math.random() * 10;
+            // Medium animation speed (12-18s)
+            animationDuration = 12 + Math.random() * 6;
+            // Medium float distance
+            floatDistance = 4 + Math.random() * 3;
+          } else {
+            sizeCategory = 'large'; // 10% chance of large
+            // Large tokens range 50-65px
+            baseSize = 50 + Math.random() * 15;
+            // Slower animation for larger tokens (15-20s)
+            animationDuration = 15 + Math.random() * 5;
+            // Very small float distance for large tokens
+            floatDistance = 2 + Math.random() * 2;
+          }
+          
+          // Reduced scale variation
+          const scaleVariation = 0.9 + Math.random() * 0.2; // Scale between 0.9 and 1.1
+          
+          // Add more randomness to positions within grid cell
+          const cellX = c * gridCellSize;
+          const cellY = r * gridCellSize;
+          
+          // Allow some tokens to be near the edges of the screen
+          let offsetX, offsetY;
+          
+          if (sizeCategory === 'large') {
+            offsetX = 50 + Math.random() * (gridCellSize - 100);
+            offsetY = 50 + Math.random() * (gridCellSize - 100);
+          } else if (sizeCategory === 'medium') {
+            offsetX = 40 + Math.random() * (gridCellSize - 80);
+            offsetY = 40 + Math.random() * (gridCellSize - 80);
+          } else {
+            // Small tokens can be closer to the edges
+            offsetX = 30 + Math.random() * (gridCellSize - 60);
+            offsetY = 30 + Math.random() * (gridCellSize - 60);
+          }
+          
+          const x = cellX + offsetX;
+          const y = cellY + offsetY;
+          
+          const delay = Math.random() * 15; // Random delay up to 15s
+            
+          // More subtle animation path params
+          const pathParams = {
+            amplitude: 0.2 + Math.random() * 0.3, // Lower amplitude for subtler movement
+            frequency: 0.2 + Math.random() * 0.4, // Lower frequency for slower oscillation
+            phase: Math.random() * Math.PI * 2,
+          };
 
-      // Create token objects with randomized positions and animation properties
-      const initializedTokens = tokenData.map((token, index) => {
-        // Calculate random positions within the container
-        const size = Math.floor(Math.random() * 20) + 30; // Size between 30px and 50px
-        const x = Math.random() * (containerWidth - size);
-        const y = Math.random() * (containerHeight - size);
-        
-        // Random animation parameters - significantly reduced for subtler movement
-        const speedX = (Math.random() * 0.05) + 0.01; // MUCH slower horizontal movement
-        const speedY = (Math.random() * 0.05) + 0.01; // MUCH slower vertical movement
-        const animationDelay = Math.random() * 10; // Random delay for out-of-sync movement
-        const floatDuration = Math.floor(Math.random() * 20) + 30; // Longer duration between 30-50s
-        
-        // Random movement direction
-        const directionX = Math.random() > 0.5 ? 1 : -1;
-        const directionY = Math.random() > 0.5 ? 1 : -1;
-        
-        // Random blur amount - increased for more subtlety
-        const blurAmount = Math.floor(Math.random() * 3) + 3; // Between 3-6px
-        
-        return {
-          ...token,
-          id: index,
-          x,
-          y,
-          size,
-          speedX: speedX * directionX,
-          speedY: speedY * directionY,
-          animationDelay,
-          floatDuration,
-          blurAmount,
-          // Animation path parameters (for curved movement) - reduced amplitude
-          amplitude: {
-            x: Math.random() * 20 + 10, // Reduced amplitude
-            y: Math.random() * 20 + 10  // Reduced amplitude
-          },
-          frequency: {
-            x: Math.random() * 0.001 + 0.0005, // Slower frequency
-            y: Math.random() * 0.001 + 0.0005  // Slower frequency
-          },
-          phase: {
-            x: Math.random() * Math.PI * 2,
-            y: Math.random() * Math.PI * 2
-          },
-          time: Math.random() * 1000,
-          lastUpdateTime: Date.now()
-        };
-      });
+          // More varied float motion factors with slower timeIncrement
+          initializedTokens.push({
+            ...token,
+            id: tokenId,
+            x,
+            y,
+            sizeCategory,
+            isHovered: false,
+            scaleVariation,
+            baseSize,
+            animationDuration,
+            floatDistance,
+            delay,
+            pathParams,
+            time: 0, // Starting time for animation
+            timeIncrement: 0.03 + (Math.random() * 0.02), // Reduced time increment for slower motion
+            direction: Math.random() > 0.5 ? 1 : -1, // Random direction
+            easing: (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, // Cubic easing
+          });
+          
+          tokenId++;
+        }
+      }
 
       setTokens(initializedTokens);
     };
@@ -135,159 +282,108 @@ const TokenBackground: React.FC = () => {
     if (backgroundRef.current) {
       initializeTokens();
 
+      // Start animation loop after a short delay
+      const timeoutId = setTimeout(() => {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }, 100);
+
       // Update token positions on resize
       const handleResize = () => {
-        if (animationFrameRef.current !== null) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
         initializeTokens();
       };
 
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (animationFrameRef.current !== null) {
-          cancelAnimationFrame(animationFrameRef.current);
+      // Pause animations when tab is hidden
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
+          }
+        } else {
+          if (!animationFrameRef.current) {
+            animationFrameRef.current = requestAnimationFrame(animate);
+          }
         }
       };
-    }
-  }, []);
 
-  useEffect(() => {
-    // Animation function to move tokens
-    const animateTokens = () => {
-      const now = Date.now();
+      window.addEventListener('resize', handleResize);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
       
-      // Throttle updates to reduce CPU usage and make motion more subtle
-      if (now - throttleRef.current < THROTTLE_TIME) {
-        animationFrameRef.current = requestAnimationFrame(animateTokens);
-        return;
-      }
-      
-      throttleRef.current = now;
-      
-      setTokens(prevTokens => {
-        if (!backgroundRef.current) return prevTokens;
-        
-        const containerWidth = backgroundRef.current.clientWidth;
-        const containerHeight = backgroundRef.current.clientHeight;
-
-        return prevTokens.map(token => {
-          // Much smaller time increment for slower animation
-          const newTime = token.time + 0.1;
-          
-          // Calculate position with sine/cosine waves for curved paths
-          const xWave = token.amplitude.x * Math.sin(token.frequency.x * newTime + token.phase.x);
-          const yWave = token.amplitude.y * Math.cos(token.frequency.y * newTime + token.phase.y);
-          
-          // Apply easing function to make movement more organic
-          const easeFactor = easeInOutCubic((Math.sin(newTime * 0.001) + 1) / 2);
-          
-          // Update base position - very slow movement
-          let newX = token.x + token.speedX * easeFactor;
-          let newY = token.y + token.speedY * easeFactor;
-          
-          // Add wave movement - significantly reduced effect
-          newX += xWave * 0.002;
-          newY += yWave * 0.002;
-          
-          // Handle boundaries with smooth deceleration
-          if (newX <= 0 || newX >= containerWidth - token.size) {
-            // Reverse direction when hitting boundaries with dampening
-            return {
-              ...token,
-              x: newX <= 0 ? 1 : containerWidth - token.size - 1, // Slight offset to prevent sticking
-              speedX: -token.speedX * 0.8, // Dampening effect on collision
-              time: newTime,
-              lastUpdateTime: now
-            };
-          }
-          
-          if (newY <= 0 || newY >= containerHeight - token.size) {
-            // Reverse direction when hitting boundaries with dampening
-            return {
-              ...token,
-              y: newY <= 0 ? 1 : containerHeight - token.size - 1, // Slight offset to prevent sticking
-              speedY: -token.speedY * 0.8, // Dampening effect on collision
-              time: newTime,
-              lastUpdateTime: now
-            };
-          }
-          
-          // Normal movement
-          return {
-            ...token,
-            x: newX,
-            y: newY,
-            time: newTime,
-            lastUpdateTime: now
-          };
-        });
-      });
-      
-      animationFrameRef.current = requestAnimationFrame(animateTokens);
-    };
-    
-    // Start animation
-    if (tokens.length > 0) {
-      animationFrameRef.current = requestAnimationFrame(animateTokens);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        clearTimeout(timeoutId);
+      };
     }
-    
-    return () => {
-      if (animationFrameRef.current !== null) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [tokens.length]);
+  }, [animate]);
 
   // Handle token hover
-  const handleTokenHover = (tokenId: number) => {
-    setHoveredToken(tokenId);
-  };
-
-  // Handle mouse leave
-  const handleTokenLeave = () => {
-    setHoveredToken(null);
+  const handleTokenHover = (tokenId: number, isHovered: boolean) => {
+    setHoveredToken(isHovered ? tokenId : null);
+    setTokens(prevTokens => 
+      prevTokens.map(token => {
+        if (token.id === tokenId) {
+          // Reset transform when hovering to center the token for tooltip
+          if (isHovered) {
+            const tokenEl = document.getElementById(`token-${token.id}`);
+            if (tokenEl) {
+              tokenEl.style.transform = `translate(-50%, -50%) scale(${token.scaleVariation * 1.15})`;
+            }
+          }
+          return { ...token, isHovered };
+        }
+        return token;
+      })
+    );
   };
 
   return (
-    <div className="token-background" ref={backgroundRef}>
-      <div className="gradient-overlay"></div>
-      {tokens.map((token) => {
-        const isHovered = hoveredToken === token.id;
-        const formattedChange = token.change.toFixed(2);
-        const isPositive = token.change > 0;
-
-        return (
-          <div
-            key={token.id}
-            className="token"
-            style={{
-              width: `${token.size}px`,
-              height: `${token.size}px`,
-              left: `${token.x}px`,
-              top: `${token.y}px`,
-              backgroundColor: token.color,
-              transform: `translate3d(0, 0, 0)`, // Force GPU acceleration
-              filter: `blur(${isHovered ? 0 : token.blurAmount}px)`,
-              animationDelay: `${token.animationDelay}s`,
-            }}
-            onMouseEnter={() => handleTokenHover(token.id)}
-            onMouseLeave={handleTokenLeave}
-          >
-            {token.symbol}
-            
-            {isHovered && (
-              <div className="tooltip">
-                <div className="token-name">{token.name}</div>
-                <div className={`token-change ${isPositive ? 'token-change-positive' : 'token-change-negative'}`}>
-                  {isPositive ? '▲' : '▼'} {Math.abs(parseFloat(formattedChange))}%
-                </div>
+    <div ref={backgroundRef} className="token-background">
+      {tokens.map((token) => (
+        <div
+          key={token.id}
+          id={`token-${token.id}`}
+          className={`token token-${token.sizeCategory}`}
+          style={{
+            top: `${token.y}px`,
+            left: `${token.x}px`,
+            '--token-id': token.id,
+            '--scale-variation': token.scaleVariation,
+            '--base-size': `${token.baseSize}px`,
+            '--animation-duration': `${token.animationDuration}s`,
+            '--float-distance': `${token.floatDistance}px`,
+            animationDelay: `${token.delay}s`,
+            transition: 'transform 0.05s linear',
+            opacity: 0.1, // Uniform opacity for all tokens
+            filter: 'blur(100px)' // Higher blur for all tokens
+          } as React.CSSProperties}
+          onMouseEnter={() => handleTokenHover(token.id, true)}
+          onMouseLeave={() => handleTokenHover(token.id, false)}
+        >
+          <img 
+            src={logoMap[token.symbol]} 
+            alt={token.symbol} 
+            className="token-logo"
+          />
+          {token.isHovered && (
+            <div className="tooltip">
+              <div className="token-name">{token.name}</div>
+              <div
+                className={`token-change ${
+                  token.change >= 0 ? "token-change-positive" : "token-change-negative"
+                }`}
+              >
+                {token.change >= 0 ? "+" : ""}
+                {token.change.toFixed(2)}%
               </div>
-            )}
-          </div>
-        );
-      })}
+            </div>
+          )}
+        </div>
+      ))}
+      <div className="gradient-overlay"></div>
     </div>
   );
 };

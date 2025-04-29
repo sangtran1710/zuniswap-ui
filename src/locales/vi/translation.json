@@ -17,9 +17,12 @@
   },
   "wallet": {
     "connect": "Kết nối ví",
+    "connectWallet": "Kết nối ví",
     "disconnect": "Ngắt kết nối",
     "connected": "Đã kết nối",
-    "connecting": "Đang kết nối..."
+    "connecting": "Đang kết nối...",
+    "popular": "Phổ biến",
+    "termsNotice": "Bằng cách kết nối ví, bạn đồng ý với Điều khoản Dịch vụ của Zuniswap và đồng ý với Chính sách Bảo mật của nó"
   },
   "swap": {
     "tabs": {

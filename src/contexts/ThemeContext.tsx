@@ -16,6 +16,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Apply theme to document root
   useEffect(() => {
     const theme = themes[isDarkMode ? 'dark' : 'light'];
+    
+    // Apply CSS variables to root
     document.documentElement.style.setProperty('--background', theme.background);
     document.documentElement.style.setProperty('--component-background', theme.componentBackground);
     document.documentElement.style.setProperty('--text-primary', theme.text.primary);
@@ -28,9 +30,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.style.setProperty('--input-text', theme.input.text);
     document.documentElement.style.setProperty('--input-placeholder', theme.input.placeholder);
     
-    // Update body class for global styles
+    // Update body and html classes for global styles
     document.body.classList.toggle('dark', isDarkMode);
     document.body.classList.toggle('light', !isDarkMode);
+    
+    // Toggle light-mode class on html element for TokenBackground CSS
+    if (isDarkMode) {
+      document.documentElement.classList.remove('light-mode');
+    } else {
+      document.documentElement.classList.add('light-mode');
+    }
   }, [isDarkMode]);
 
   return (

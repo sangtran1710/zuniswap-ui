@@ -14,9 +14,9 @@ export default {
       colors: {
         'zuni-dark': 'rgba(15, 23, 42, 0.8)',
         'zuni-light': '#94a3b8',
-        'zuni-primary': '#7e22ce',
-        'zuni-secondary': '#c084fc',
-        'zuni-accent': '#ec4899',
+        'zuni-primary': '#4F46E5',
+        'zuni-secondary': '#6366F1',
+        'zuni-accent': '#3B82F6',
         bluePrimary: '#3B82F6',     // blue-500
         purpleDark: '#6B21A8',      // purple-800
         border: "var(--border-color)",
@@ -57,4 +57,3 @@ export default {
   },
   plugins: [],
 }
-

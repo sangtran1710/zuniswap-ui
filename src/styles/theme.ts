@@ -3,6 +3,9 @@ export const theme = {
     family: `'Inter', 'Helvetica Neue', sans-serif`,
     size: {
       heading: 'text-3xl',
+      title: 'text-2xl',
+      subtitle: 'text-xl',
+      body: 'text-base',
       button: 'text-base',
       tokenAmount: 'text-xl',
       label: 'text-sm',
@@ -35,4 +38,4 @@ export const theme = {
     padding: 'px-8 py-6',
     spacing: 'space-y-4',
   },
-}; 
+};

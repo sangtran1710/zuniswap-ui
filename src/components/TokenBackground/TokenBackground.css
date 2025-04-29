@@ -1,3 +1,48 @@
+/* TokenBackground theme variables */
+:root {
+  /* Dark theme (default) */
+  --tb-bg: #000;
+  --tb-overlay-start: rgba(0, 0, 0, 0.1);
+  --tb-overlay-middle: rgba(0, 0, 0, 0.6);
+  --tb-overlay-end: rgba(0, 0, 0, 0.9);
+  --tb-token-blur-small: 5px;
+  --tb-token-blur-medium: 4px;
+  --tb-token-blur-large: 3px;
+  --tb-token-opacity-small: 0.35;
+  --tb-token-opacity-medium: 0.4;
+  --tb-token-opacity-large: 0.5;
+  
+  /* Swap card colors */
+  --swap-card-bg: rgba(19, 26, 42, 0.8);
+  --swap-card-border: rgba(60, 65, 80, 0.1);
+  --swap-card-shadow: rgba(0, 0, 0, 0.3);
+  --swap-input-bg: rgba(13, 17, 28, 0.6);
+  --swap-text-primary: #fff;
+  --swap-text-secondary: rgba(255, 255, 255, 0.6);
+}
+
+:root.light-mode {
+  /* Light theme */
+  --tb-bg: #f5f6fc;
+  --tb-overlay-start: rgba(245, 246, 252, 0.1);
+  --tb-overlay-middle: rgba(245, 246, 252, 0.6);
+  --tb-overlay-end: rgba(245, 246, 252, 0.9);
+  --tb-token-blur-small: 3px;
+  --tb-token-blur-medium: 2.5px;
+  --tb-token-blur-large: 2px;
+  --tb-token-opacity-small: 0.25;
+  --tb-token-opacity-medium: 0.3;
+  --tb-token-opacity-large: 0.4;
+  
+  /* Swap card colors - light theme */
+  --swap-card-bg: rgba(255, 255, 255, 0.8);
+  --swap-card-border: rgba(230, 230, 230, 1);
+  --swap-card-shadow: rgba(0, 0, 0, 0.05);
+  --swap-input-bg: rgba(245, 246, 252, 0.6);
+  --swap-text-primary: #1a1b23;
+  --swap-text-secondary: rgba(26, 27, 35, 0.6);
+}
+
 /* TokenBackground styles */
 .token-background {
   position: fixed;
@@ -5,49 +50,62 @@
   overflow: hidden;
   z-index: -1;
   pointer-events: none;
+  background-color: var(--tb-bg);
 }
 
 .token {
   position: absolute;
-  border-radius: 50%;
   pointer-events: auto;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 0.8rem;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
-  will-change: transform, filter, box-shadow;
-  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  opacity: 0.75;
-  transform-origin: center center;
-}
-
-.token::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
   border-radius: 50%;
-  opacity: 0;
-  z-index: -1;
-  background: inherit;
-  filter: blur(8px);
-  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Size based on custom properties with !important to ensure they take precedence */
+  width: calc(var(--base-size, 32px) * var(--scale-variation, 1)) !important;
+  height: calc(var(--base-size, 32px) * var(--scale-variation, 1)) !important;
+  transform: translate(-50%, -50%) scale(var(--scale-variation, 1)) !important;
+  /* Animation is now handled with JavaScript */
+  will-change: transform;
 }
 
-.token:hover::before {
-  opacity: 0.7;
+.token-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: blur(var(--tb-token-blur-medium));
+  opacity: var(--tb-token-opacity-medium);
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  border-radius: 50%;
 }
 
+/* Small tokens - just adjust blur/opacity, not size */
+.token-small .token-logo {
+  filter: blur(var(--tb-token-blur-small));
+  opacity: var(--tb-token-opacity-small);
+}
+
+/* Medium tokens - just set z-index */
+.token-medium {
+  z-index: 2;
+}
+
+/* Large tokens - just adjust blur/opacity, not size */
+.token-large .token-logo {
+  filter: blur(var(--tb-token-blur-large));
+  opacity: var(--tb-token-opacity-large);
+}
+
+/* Hover effects */
+.token:hover .token-logo {
+  filter: blur(0) !important;
+  opacity: 1 !important;
+  transform: scale(1.15) !important;
+}
+
+/* Add hover effect with transition */
 .token:hover {
-  box-shadow: 0 0 20px currentColor;
-  transform: scale(1.1);
-  opacity: 1;
-  z-index: 10;
-  filter: blur(0px) !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 100 !important;
 }
 
 .tooltip {
@@ -55,16 +113,17 @@
   top: 120%;
   left: 50%;
   transform: translateX(-50%) translateY(0);
-  background-color: rgba(18, 18, 18, 0.95);
+  background-color: rgba(25, 27, 31, 0.95);
   color: white;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.8rem;
   white-space: nowrap;
   z-index: 100;
   pointer-events: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -82,18 +141,23 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-bottom-color: rgba(18, 18, 18, 0.95);
+  border-bottom-color: rgba(25, 27, 31, 0.95);
 }
 
 .token-name {
   font-weight: bold;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  background: linear-gradient(to right, #4F46E5, #3B82F6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .token-change {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
+  font-weight: 500;
 }
 
 .token-change-positive {
@@ -104,85 +168,102 @@
   color: #f87171;
 }
 
-/* Floating animation keyframes - much more subtle */
-@keyframes floatVertical {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@keyframes floatHorizontal {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(5px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Apply a more subtle pulse animation to tokens by default */
-.token {
-  animation: pulse 15s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95);
-}
-
-/* Gradient overlay for better visual effect */
+/* Gradient overlay for theme-based styling */
 .gradient-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 100%);
+  background: radial-gradient(
+    circle at center, 
+    var(--tb-overlay-start) 0%, 
+    var(--tb-overlay-middle) 70%, 
+    var(--tb-overlay-end) 100%
+  );
   z-index: -1;
   pointer-events: none;
 }
 
-/* Glass effect for tokens */
-.glass-effect {
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Additional depth to tokens */
+/* Additional depth with inner glow */
 .token:after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 1px;
   border-radius: 50%;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
-  opacity: 0.3;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2);
+  opacity: 0.2;
   pointer-events: none;
+}
+
+/* Size-specific inner glow */
+.token-small:after {
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.6);
+  opacity: 0.3;
+}
+
+.token-medium:after {
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.7);
+  opacity: 0.4;
+}
+
+.token-large:after {
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.8);
+  opacity: 0.5;
+}
+
+/* Modern tech-style interactive effect */
+.token:hover:after {
+  opacity: 0.8;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.9);
+  animation: glowPulse 1.5s infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0.8;
+  }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .token {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+  }
+  
+  .token:hover {
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
 @media (max-width: 480px) {
   .token {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
   }
+  
+  .token:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* Swap card styles */
+.swap-card {
+  background-color: var(--swap-card-bg);
+  border: 1px solid var(--swap-card-border);
+  box-shadow: 0 8px 32px var(--swap-card-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  color: var(--swap-text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.swap-input {
+  background-color: var(--swap-input-bg);
+  color: var(--swap-text-primary);
+  border: 1px solid var(--swap-card-border);
+}
+
+.swap-label {
+  color: var(--swap-text-secondary);
 } 

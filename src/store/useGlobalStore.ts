@@ -9,10 +9,15 @@ interface Token {
   price?: number;
 }
 
+// Định nghĩa các loại theme
+type ThemeMode = 'auto' | 'light' | 'dark';
+
 interface GlobalState {
   // Theme
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
+  themeMode: ThemeMode;
+  isDarkMode: boolean; // Giữ lại để tương thích ngược
+  setThemeMode: (mode: ThemeMode) => void;
+  toggleDarkMode: () => void; // Giữ lại để tương thích ngược
 
   // Tokens
   tokens: Token[];
@@ -31,6 +36,12 @@ interface GlobalState {
   isWalletModalOpen: boolean;
   openWalletModal: () => void;
   closeWalletModal: () => void;
+  
+  // Account Sidebar (thay thế modal)
+  isAccountSidebarOpen: boolean;
+  openAccountSidebar: () => void;
+  closeAccountSidebar: () => void;
+  toggleAccountSidebar: () => void;
 }
 
 // Sample tokens
@@ -65,10 +76,33 @@ const defaultTokens: Token[] = [
   },
 ];
 
+// Hàm để kiểm tra xem chế độ hệ thống có phải là dark mode hay không
+const isSystemDarkMode = () => {
+  if (typeof window === 'undefined') return true; // Mặc định là dark mode khi SSR
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
+
+// Hàm để tính toán isDarkMode dựa trên themeMode
+const calculateIsDarkMode = (mode: ThemeMode): boolean => {
+  if (mode === 'auto') return isSystemDarkMode();
+  return mode === 'dark';
+};
+
 export const useGlobalStore = create<GlobalState>((set) => ({
   // Theme
+  themeMode: 'dark', // Mặc định là dark
   isDarkMode: true,
-  toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
+  setThemeMode: (mode) => set({ 
+    themeMode: mode,
+    isDarkMode: calculateIsDarkMode(mode)
+  }),
+  toggleDarkMode: () => set((state) => {
+    const newMode = state.isDarkMode ? 'light' : 'dark';
+    return { 
+      themeMode: newMode,
+      isDarkMode: !state.isDarkMode 
+    };
+  }),
 
   // Tokens
   tokens: defaultTokens,
@@ -85,12 +119,18 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   
   // Wallet
   isWalletModalOpen: false,
-  openWalletModal: () => {
-    console.log('Opening wallet modal');
-    set({ isWalletModalOpen: true });
+  openWalletModal: () => set({ isWalletModalOpen: true }),
+  closeWalletModal: () => set({ isWalletModalOpen: false }),
+  
+  // Account Sidebar
+  isAccountSidebarOpen: false,
+  openAccountSidebar: () => {
+    console.log('Opening account sidebar');
+    set({ isAccountSidebarOpen: true });
   },
-  closeWalletModal: () => {
-    console.log('Closing wallet modal');
-    set({ isWalletModalOpen: false });
+  closeAccountSidebar: () => {
+    console.log('Closing account sidebar');
+    set({ isAccountSidebarOpen: false });
   },
+  toggleAccountSidebar: () => set((state) => ({ isAccountSidebarOpen: !state.isAccountSidebarOpen })),
 })); 
