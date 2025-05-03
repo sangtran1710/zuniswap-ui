@@ -23,18 +23,25 @@ declare global {
 window.ZuniswapUI = {
   widgetWidth: 480, // Fixed width for both search and swap widget
   reloadWithAnimation: () => {
-    // Thêm class để ngăn thanh cuộn xuất hiện và gây flicker
-    document.documentElement.classList.add('animating');
-    document.body.classList.add('animating');
-    
-    // Lưu trạng thái animation vào localStorage để biết đây là reload
-    localStorage.setItem('zuniswap_reload_animation', 'true');
-    
-    // Đợi một chút để đảm bảo các class đã được áp dụng
-    setTimeout(() => {
-      // Reload trang
+    // Đơn giản hóa hệ thống animation khi reload
+    try {
+      // Thêm class để ngăn thanh cuộn xuất hiện và gây flicker
+      document.documentElement.classList.add('animating');
+      document.body.classList.add('animating');
+      
+      // Lưu trạng thái animation vào localStorage để biết đây là reload
+      localStorage.setItem('zuniswap_reload_animation', 'true');
+      
+      // Đợi một chút để đảm bảo các class đã được áp dụng
+      setTimeout(() => {
+        // Reload trang
+        window.location.reload();
+      }, 50);
+    } catch (error) {
+      console.error('Error setting up animation:', error);
+      // Fallback: reload trang bình thường nếu có lỗi
       window.location.reload();
-    }, 50);
+    }
   }
 };
 
@@ -45,145 +52,96 @@ document.documentElement.style.setProperty('--title-bottom-spacing', '48px');
 
 function App() {
   useTranslation(); // Giữ lại hook nhưng không sử dụng biến t
-  const { isAccountSidebarOpen, closeAccountSidebar, isDarkMode, themeMode } = useGlobalStore();
+  const { isAccountSidebarOpen, closeAccountSidebar, isDarkMode } = useGlobalStore();
 
-  // Theo dõi thay đổi của theme và cập nhật class cho body
+  // Xử lý theme và animation
   useEffect(() => {
     document.title = 'ZuniSwap'; // Set the document title
-    
-    // Thêm class cho theme (Restored original logic)
+
+    // Force the body to have the correct background color
+    document.body.style.backgroundColor = '#0D111C';
+    document.body.style.color = '#FFFFFF';
+
     if (isDarkMode) {
-      document.body.classList.add('dark-theme'); 
-      document.body.classList.remove('light-theme'); 
       document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light'); 
     } else {
-      document.body.classList.add('light-theme'); 
-      document.body.classList.remove('dark-theme'); 
-      document.documentElement.classList.add('light'); 
       document.documentElement.classList.remove('dark');
     }
     
-    // Thêm data-theme attribute cho việc styling (Restored)
-    document.documentElement.setAttribute('data-theme', themeMode); 
-    
-    // Theo dõi thay đổi của theme hệ thống khi ở chế độ auto
-    if (themeMode === 'auto') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      const handleChange = (e: MediaQueryListEvent) => {
-        if (e.matches) {
-          document.body.classList.add('dark-theme'); // Restored
-          document.body.classList.remove('light-theme'); // Restored
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('light'); // Restored
-        } else {
-          document.body.classList.add('light-theme'); // Restored
-          document.body.classList.remove('dark-theme'); // Restored
-          document.documentElement.classList.add('light'); // Restored
-          document.documentElement.classList.remove('dark');
-        }
-      };
-      
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-    
-    // Thêm sự kiện beforeunload để bắt khi người dùng bấm nút reload của trình duyệt
+    // Xử lý animation khi reload
     const handleBeforeUnload = () => {
-      // Đặt flag để biết đây là reload bởi trình duyệt
       localStorage.setItem('zuniswap_reload_animation', 'true');
     };
     
-    // Đăng ký sự kiện beforeunload
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     // Kiểm tra xem có phải reload với animation không
     const hasReloadAnimation = localStorage.getItem('zuniswap_reload_animation') === 'true';
     
+    // Đảm bảo luôn xóa flag trong localStorage để tránh lỗi khi refresh lại
+    localStorage.removeItem('zuniswap_reload_animation');
+    
+    // Thêm cơ chế fallback để đảm bảo các class animation luôn được xóa
+    const safetyTimeout = setTimeout(() => {
+      document.documentElement.classList.remove('animating');
+      document.body.classList.remove('animating');
+      document.querySelectorAll('.swap-widget-animate, .header-animate, .background-animate').forEach(el => {
+        el.classList.remove('swap-widget-animate', 'header-animate', 'background-animate');
+      });
+    }, 3000); // Fallback sau 3 giây
+    
     if (hasReloadAnimation) {
-      // Xóa flag trong localStorage
-      localStorage.removeItem('zuniswap_reload_animation');
-      
-      // Thêm class để ngăn thanh cuộn xuất hiện và gây flicker
-      document.documentElement.classList.add('animating');
-      document.body.classList.add('animating');
-      
-      // Áp dụng animation cho từng phần tử theo thứ tự
-      // 1. Swap Widget xuất hiện trước - sử dụng nhiều selector để tìm chính xác
-      const swapWidgetSelectors = [
-        '#swap-widget', // Selector mới dựa trên ID đã thêm
-        '.swap-widget-container', // Selector dựa trên class đã thêm
-        '.app-container > div > div', // Selector cũ
-        '.w-[480px]', // Selector dựa trên class của SwapWidget
-        '[style*="width: 480px"]', // Selector dựa trên style inline
-        '.relative.z-10.mx-auto' // Selector dựa trên các class khác
-      ];
-      
-      // Tìm Swap Widget bằng nhiều cách khác nhau
-      let swapWidget = null;
-      for (const selector of swapWidgetSelectors) {
-        const element = document.querySelector(selector);
-        if (element) {
-          swapWidget = element;
-          console.log('Found Swap Widget with selector:', selector);
-          break;
-        }
-      }
-      
-      // Nếu vẫn không tìm thấy, thử tìm tất cả các phần tử có style width: 480px
-      if (!swapWidget) {
-        const allElements = document.querySelectorAll('*');
-        for (const el of allElements) {
-          if (el instanceof HTMLElement && el.style.width === '480px') {
-            swapWidget = el;
-            console.log('Found Swap Widget by inline style width');
-            break;
-          }
-        }
-      }
-      
-      if (swapWidget) {
-        swapWidget.classList.add('swap-widget-animate');
-        console.log('Applied animation to Swap Widget');
-      } else {
-        console.error('Could not find Swap Widget element');
-      }
-      
-      // 2. Header xuất hiện sau
-      const header = document.querySelector('header');
-      if (header) {
-        header.classList.add('header-animate');
-      }
-      
-      // 3. Background xuất hiện cuối cùng
-      const background = document.querySelector('.app-container');
-      if (background) {
-        background.classList.add('background-animate');
-      }
-      
-      // Xóa tất cả các class sau khi animation hoàn thành
-      setTimeout(() => {
-        if (swapWidget) swapWidget.classList.remove('swap-widget-animate');
-        if (header) header.classList.remove('header-animate');
-        if (background) background.classList.remove('background-animate');
+      try {
+        // Thêm class để ngăn thanh cuộn xuất hiện và gây flicker
+        document.documentElement.classList.add('animating');
+        document.body.classList.add('animating');
+        
+        // Áp dụng animation đơn giản cho các phần tử chính sử dụng ID cố định
+        const swapWidget = document.getElementById('zuniswap-widget');
+        const header = document.getElementById('zuniswap-header');
+        const background = document.getElementById('zuniswap-background');
+        
+        // Fallback nếu không tìm thấy phần tử bằng ID
+        const swapWidgetFallback = swapWidget || document.querySelector('.swap-widget-container');
+        const headerFallback = header || document.querySelector('header');
+        const backgroundFallback = background || document.querySelector('.token-background-container');
+        
+        // Áp dụng class animation cho các phần tử nếu tìm thấy
+        if (swapWidgetFallback) swapWidgetFallback.classList.add('swap-widget-animate');
+        if (headerFallback) headerFallback.classList.add('header-animate');
+        if (backgroundFallback) backgroundFallback.classList.add('background-animate');
+        
+        // Xóa tất cả các class sau khi animation hoàn thành
+        setTimeout(() => {
+          clearTimeout(safetyTimeout); // Xóa timeout an toàn
+          
+          if (swapWidgetFallback) swapWidgetFallback.classList.remove('swap-widget-animate');
+          if (headerFallback) headerFallback.classList.remove('header-animate');
+          if (backgroundFallback) backgroundFallback.classList.remove('background-animate');
+          document.documentElement.classList.remove('animating');
+          document.body.classList.remove('animating');
+        }, 1500); // Giảm thời gian xuống 1.5 giây
+      } catch (error) {
+        // Nếu có lỗi, đảm bảo xóa tất cả các class animation
+        console.error('Animation error:', error);
         document.documentElement.classList.remove('animating');
         document.body.classList.remove('animating');
-      }, 2000); // Tăng thời gian để đảm bảo tất cả animation hoàn thành
+        clearTimeout(safetyTimeout);
+      }
     }
     
     // Cleanup sự kiện khi component unmount
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [isDarkMode, themeMode]);
+  }, [isDarkMode]);
 
   return (
     <ToastProvider>
       {/* Token Background */}
       <TokenBackground />
       
-      <div className="app-container">
+      <div className="app-container" style={{ backgroundColor: '#0D111C', minHeight: '100vh', position: 'relative', zIndex: 2 }}>
         {/* Routes */}
         <AppRoutes />
         

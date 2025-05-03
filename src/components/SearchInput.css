@@ -1,0 +1,35 @@
+/* CSS tùy chỉnh cho ô tìm kiếm */
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.search-input {
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+  color: white;
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 3rem;
+}
+
+.search-input:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* Xóa bỏ tất cả các viền khi focus */
+.search-input:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}

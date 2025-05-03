@@ -246,14 +246,14 @@ const TokenBackground: React.FC = () => {
     height: '100vh',
     overflow: 'hidden',
     pointerEvents: 'none',
-    zIndex: 0,
-    filter: 'blur(1.5px) backdrop-blur(8px)',
-    opacity: 0.7,
-    backdropFilter: 'blur(8px)',
+    zIndex: 0, // Change from -1 to 0 to ensure it's visible but behind content
+    filter: 'blur(1px)', // Reduce blur effect
+    opacity: 0.3, // Reduce opacity further to make content more visible
+    backgroundColor: 'transparent', // Keep background transparent
   };
   
   return (
-    <div style={containerStyle}>
+    <div id="zuniswap-background" className="token-background-container" style={containerStyle}>
       {tokens.map((token) => (
         <TokenLogo
           key={token.id}

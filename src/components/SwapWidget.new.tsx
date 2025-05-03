@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDownIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
 import './SearchInput.css';
 import './ButtonEffects.css';
@@ -24,9 +24,10 @@ const SwapWidget: React.FC = () => {
   const [buyAmount, setBuyAmount] = useState('');
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const [activeTokenField, setActiveTokenField] = useState<'sell' | 'buy'>('sell');
-  const [buttonPosition, setButtonPosition] = useState<{top: number, left: number, width: number} | undefined>(undefined);
-  const sellButtonRef = useRef<HTMLButtonElement>(null);
-  const buyButtonRef = useRef<HTMLButtonElement>(null);
+  const [tokenList, setTokenList] = useState<any[]>([]);
+  const [popularTokens, setPopularTokens] = useState<any[]>([]);
+  const [isLoadingTokens, setIsLoadingTokens] = useState(false);
+  const [tokenFetchError, setTokenFetchError] = useState<string | null>(null);
 
   // Token price data
   const tokenPrices = {
@@ -189,18 +190,6 @@ const SwapWidget: React.FC = () => {
   // Hàm mở modal chọn token
   const openTokenModal = (field: 'sell' | 'buy') => {
     setActiveTokenField(field);
-    
-    // Lấy vị trí của button đã click
-    const buttonRef = field === 'sell' ? sellButtonRef : buyButtonRef;
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setButtonPosition({
-        top: rect.top,
-        left: rect.left,
-        width: rect.width
-      });
-    }
-    
     setIsTokenModalOpen(true);
   };
   
@@ -255,7 +244,6 @@ const SwapWidget: React.FC = () => {
             />
             {/* Token Selector Button - Improved Uniswap style */} 
             <button 
-              ref={sellButtonRef}
               onClick={() => openTokenModal('sell')}
               className="absolute right-0 flex items-center bg-[#F9F9F9] hover:bg-[#EDEEF2] dark:bg-[#212429] dark:hover:bg-[#2C2F36] rounded-[20px] h-10 px-3 justify-center transition-colors gap-2 border border-[#E8E9EA] dark:border-[#40444F]"
             >
@@ -298,7 +286,6 @@ const SwapWidget: React.FC = () => {
             />
             {/* Token Selector Button - Improved Uniswap style */}
             <button 
-              ref={buyButtonRef}
               onClick={() => openTokenModal('buy')}
               className="absolute right-0 flex items-center bg-[#F9F9F9] hover:bg-[#EDEEF2] dark:bg-[#212429] dark:hover:bg-[#2C2F36] rounded-[20px] h-10 px-3 justify-center transition-colors gap-2 border border-[#E8E9EA] dark:border-[#40444F]"
             >
@@ -342,7 +329,6 @@ const SwapWidget: React.FC = () => {
           onClose={() => setIsTokenModalOpen(false)}
           onSelectToken={handleSelectToken}
           from="swap"
-          position={buttonPosition}
         />
       </div>
     </div>

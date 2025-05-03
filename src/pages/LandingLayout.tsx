@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import LandingHero from '../components/LandingHero';
 import SwapWidget from '../components/SwapWidget';
 import BackgroundEffects from '../components/BackgroundEffects';
-import MarketplaceInfo from '../components/MarketplaceInfo';
 
 const LandingLayout: React.FC = () => {
   const [contentHeight, setContentHeight] = useState(0);
@@ -30,8 +29,8 @@ const LandingLayout: React.FC = () => {
       
       {/* Main content container */}
       <div 
-        className="relative flex flex-col items-center px-4 backdrop-blur-sm"
-        style={{ minHeight: `${contentHeight}px` }}
+        className="relative flex flex-col items-center px-4"
+        style={{ minHeight: `${contentHeight}px`, position: 'relative', zIndex: 10 }}
       >
         {/* Background effects */}
         <BackgroundEffects />
@@ -41,9 +40,6 @@ const LandingLayout: React.FC = () => {
         
         {/* Swap widget */}
         <SwapWidget />
-        
-        {/* Marketplace info and scroll indicator */}
-        <MarketplaceInfo />
       </div>
     </main>
   );

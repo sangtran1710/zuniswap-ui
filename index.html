@@ -4,8 +4,43 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/zuniswap-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src *; img-src 'self' data: https://*.walletconnect.com https://*.walletconnect.org https://explorer-api.walletconnect.com; object-src 'none'; trusted-types 'lit-html';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src *; img-src 'self' data: https://*.walletconnect.com https://*.walletconnect.org https://explorer-api.walletconnect.com https://assets.coingecko.com; object-src 'none'; trusted-types 'lit-html';">
     <title>ZuniSwap</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #0D111C !important;
+        color: #FFFFFF !important;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
+      }
+      #root {
+        min-height: 100vh;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        background-color: #0D111C !important;
+        color: #FFFFFF !important;
+      }
+      /* Force all text to be visible */
+      * {
+        color: #FFFFFF;
+      }
+      /* Ensure header is visible */
+      header {
+        background-color: rgba(13, 17, 28, 0.8) !important;
+        backdrop-filter: blur(10px);
+        z-index: 50 !important;
+      }
+      /* Make sure content is visible */
+      main, div, p, h1, h2, h3, h4, h5, h6, span, button {
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

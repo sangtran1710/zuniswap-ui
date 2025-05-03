@@ -4,7 +4,7 @@ import { useGlobalStore } from '../store/useGlobalStore';
 const BackgroundEffects: React.FC = () => {
   const { isDarkMode } = useGlobalStore();
   return (
-    <div className={`absolute inset-0 -z-10 overflow-hidden ${isDarkMode ? 'backdrop-blur-sm' : 'bg-white'}`} style={{ opacity: isDarkMode ? 1 : 0.2 }}>
+    <div className={`absolute inset-0 z-0 overflow-hidden ${isDarkMode ? '' : 'bg-white'}`} style={{ opacity: isDarkMode ? 0.3 : 0.2 }}>
       {/* Gradient blobs */}
       <div className={`absolute -top-40 -left-40 w-80 h-80 bg-[#FF007A] rounded-full ${isDarkMode ? 'opacity-5' : 'opacity-1'} md:blur-[120px] blur-[80px]`}></div>
       <div className={`absolute top-40 -right-20 w-60 h-60 bg-blue-500 rounded-full ${isDarkMode ? 'opacity-5' : 'opacity-1'} md:blur-[120px] blur-[80px]`}></div>

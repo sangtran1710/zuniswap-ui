@@ -37,6 +37,8 @@
     min-height: 100vh;
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0f172a; /* Fallback background color */
+    color: #f8fafc; /* Fallback text color */
   }
 }
 
@@ -211,15 +213,16 @@
 }
 
 /* Remove number input arrows */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
 }
 
 /* Animation classes for floating tokens */
@@ -336,7 +339,6 @@ input[type="number"] {
 /* Responsive adjustments for UI elements */
 @media (max-width: 768px) {
   :root {
-    --widget-width: 90vw !important;
     --title-top-spacing: 48px !important;
     --title-bottom-spacing: 24px !important;
   }
@@ -344,8 +346,32 @@ input[type="number"] {
 
 @media (min-width: 769px) and (max-width: 1024px) {
   :root {
-    --widget-width: 440px !important;
     --title-top-spacing: 64px !important;
     --title-bottom-spacing: 36px !important;
+  }
+}
+
+/* Shimmer animation */
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  .animate-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%; /* Width of the shimmer effect */
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite linear; /* Adjust duration/timing as needed */
+    pointer-events: none; /* Ensure it doesn't block clicks */
+    z-index: 1; /* Ensure it's above the background but below text */
   }
 }

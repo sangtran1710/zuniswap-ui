@@ -31,7 +31,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
         />
       </div>
       {isDarkMode ? (
-        <MoonIcon className="w-5 h-5 text-purple-300" />
+        <MoonIcon className="w-5 h-5 text-white drop-shadow-[0_0_3px_rgba(255,255,255,0.7)]" />
       ) : (
         <SunIcon className="w-5 h-5 text-yellow-400" />
       )}

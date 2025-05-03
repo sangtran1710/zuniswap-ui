@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, PersistOptions } from 'zustand/middleware';
 
 interface Token {
   symbol: string;
@@ -12,11 +13,21 @@ interface Token {
 // Định nghĩa các loại theme
 type ThemeMode = 'auto' | 'light' | 'dark';
 
+// Định nghĩa các loại ngôn ngữ
+type Language = 'en' | 'vi' | 'zh' | 'ko' | 'ja';
+
+// Định nghĩa các loại tiền tệ
+type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'VND';
+
 interface GlobalState {
-  // Theme
+  // Global Preferences
   themeMode: ThemeMode;
   isDarkMode: boolean; // Giữ lại để tương thích ngược
+  language: Language;
+  currency: Currency;
   setThemeMode: (mode: ThemeMode) => void;
+  setLanguage: (lang: Language) => void;
+  setCurrency: (currency: Currency) => void;
   toggleDarkMode: () => void; // Giữ lại để tương thích ngược
 
   // Tokens
@@ -88,10 +99,12 @@ const calculateIsDarkMode = (mode: ThemeMode): boolean => {
   return mode === 'dark';
 };
 
-export const useGlobalStore = create<GlobalState>((set) => ({
-  // Theme
+export const useGlobalStore = create<GlobalState>()(persist((set) => ({
+  // Global Preferences
   themeMode: 'dark', // Mặc định là dark
   isDarkMode: true,
+  language: 'en', // Mặc định là tiếng Anh
+  currency: 'USD', // Mặc định là USD
   setThemeMode: (mode) => set({ 
     themeMode: mode,
     isDarkMode: calculateIsDarkMode(mode)
@@ -103,6 +116,10 @@ export const useGlobalStore = create<GlobalState>((set) => ({
       isDarkMode: !state.isDarkMode 
     };
   }),
+  
+  setLanguage: (lang) => set({ language: lang }),
+  setCurrency: (currency) => set({ currency }),
+
 
   // Tokens
   tokens: defaultTokens,
@@ -133,4 +150,11 @@ export const useGlobalStore = create<GlobalState>((set) => ({
     set({ isAccountSidebarOpen: false });
   },
   toggleAccountSidebar: () => set((state) => ({ isAccountSidebarOpen: !state.isAccountSidebarOpen })),
-})); 
+}), {
+  name: 'zuniswap-global-store',
+  partialize: (state: GlobalState) => ({
+    themeMode: state.themeMode,
+    language: state.language,
+    currency: state.currency,
+  }),
+}));

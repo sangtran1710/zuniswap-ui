@@ -1,0 +1,73 @@
+/* CSS cho nút Get Started với nền gradient và hiệu ứng lóe sáng */
+.gradient-button {
+  background: linear-gradient(90deg, #FC72FF 0%, #FA52A0 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 0;
+  border-radius: 1rem;
+  font-size: 17px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 100%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  /* Thêm hiệu ứng 3D và shadow */
+  box-shadow: 0 4px 12px rgba(252, 114, 255, 0.3),
+              0 1px 3px rgba(0, 0, 0, 0.2),
+              inset 0 1px 1px rgba(255, 255, 255, 0.4),
+              inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.gradient-button:hover {
+  background: linear-gradient(90deg, #EE65E9 0%, #F23F96 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(252, 114, 255, 0.4),
+              0 2px 4px rgba(0, 0, 0, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.5),
+              inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.gradient-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(252, 114, 255, 0.3),
+              0 1px 2px rgba(0, 0, 0, 0.2),
+              inset 0 1px 1px rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.1s ease;
+}
+
+/* Hiệu ứng lóe sáng slide từ trái qua phải */
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}

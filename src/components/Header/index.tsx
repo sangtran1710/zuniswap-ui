@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import ThemeSwitcher from '../ThemeSwitcher';
 import { useGlobalStore } from '../../store/useGlobalStore';
 import TokenSearchDropdown from '../TokenSearchDropdown';
+import GlobalPreferences from '../GlobalPreferences';
 
 type Token = {
   name: string;
@@ -38,7 +39,7 @@ const Header: React.FC = () => {
   });
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-40 backdrop-filter backdrop-blur-md ${isDarkMode ? 'bg-transparent' : 'bg-white/50'}`}>
+    <header id="zuniswap-header" className={`fixed top-0 left-0 right-0 z-50 backdrop-filter backdrop-blur-lg ${isDarkMode ? 'bg-[#0D111C]/80 border-b border-[#293249]/40' : 'bg-white/80 border-b border-gray-200/70'}`}>
       <div className="w-full px-4 sm:px-6 lg:px-8 bg-transparent">
         <div className="grid grid-cols-[1fr_auto_1fr] h-[72px] items-center relative bg-transparent">
           {/* Left: Logo + Navigation (flush left) */}
@@ -48,7 +49,7 @@ const Header: React.FC = () => {
               className="flex items-center mr-6 cursor-pointer"
             >
               <div className="text-2xl font-extrabold flex items-center">
-                <span className="bg-gradient-to-r from-pink-600 via-pink-500 to-purple-600 text-transparent bg-clip-text drop-shadow-sm">ZuniSwap</span>
+                <span className="bg-gradient-to-r from-[#FF007A] via-[#FC72FF] to-[#7A5AF8] text-transparent bg-clip-text drop-shadow-sm hover:opacity-80 transition-opacity">ZuniSwap</span>
               </div>
             </div>
             <nav className="hidden md:flex items-center space-x-1">
@@ -110,7 +111,7 @@ const Header: React.FC = () => {
           <div className="w-[384px] mx-auto" ref={tokenDropdownRef}>
             <button
               onClick={() => setIsTokenDropdownOpen(true)}
-              className={`w-full flex items-center px-4 py-[10px] rounded-[12px] text-sm transition-all focus:outline-none ${isDarkMode ? 'bg-[#22252D] border border-[#383D4D]/40 text-white/80 hover:border-[#383D4D]' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300'}`}
+              className={`w-full flex items-center px-4 py-[10px] rounded-[20px] text-sm transition-all focus:outline-none ${isDarkMode ? 'bg-[#131A2A] border border-[#383D4D]/40 text-white/80 hover:border-[#4C5480] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 shadow-sm'}`}
             >
               <svg className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
               {selectedToken ? (
@@ -119,7 +120,7 @@ const Header: React.FC = () => {
                   <span className="font-medium">{selectedToken.symbol}</span>
                 </>
               ) : (
-                <span>Search tokens</span>
+                <span className="text-[#99A1BD] hover:text-white transition-colors">Search tokens</span>
               )}
             </button>
             <TokenSearchDropdown
@@ -134,14 +135,15 @@ const Header: React.FC = () => {
             />
           </div>
 
-          {/* Right: Connect, Theme, GlobalMenu (flush right) */}
+          {/* Right: Connect, Theme, GlobalPreferences, GlobalMenu (flush right) */}
           <div className="flex items-center space-x-3 justify-end">
             <button 
               onClick={() => openWalletModal()}
-              className="px-3 py-[8px] text-sm font-medium rounded-[12px] bg-pink-600 hover:bg-pink-700 text-white transition-colors"
+              className="px-4 py-[9px] text-sm font-semibold rounded-[20px] bg-[#FC72FF] hover:bg-[#FB58FF] text-white transition-all shadow-[0_0px_10px_rgba(252,114,255,0.2)] hover:shadow-[0_0px_12px_rgba(252,114,255,0.4)] active:scale-[0.98]"
             >
               {t('Connect')}
             </button>
+            <GlobalPreferences className="hidden md:block" />
             <ThemeSwitcher className="hidden md:block" />
             <div ref={menuRef} className="relative">
               <button
